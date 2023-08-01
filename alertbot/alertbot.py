@@ -6,6 +6,7 @@ import logging as logger
 from dotenv import dotenv_values
 from typing import Dict
 
+
 class Alertbot:
     def __init__(
         self,
@@ -30,9 +31,7 @@ class Alertbot:
         self.service = service
 
     def _get_client_mappings(self):
-        client_dict = {
-            "slack": WebClient
-        }
+        client_dict = {"slack": WebClient}
         if self.client_type in client_dict:
             return client_dict[self.client_type]
         else:
