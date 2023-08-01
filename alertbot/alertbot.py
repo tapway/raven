@@ -3,22 +3,21 @@ from slack_sdk import WebClient
 import yaml
 from pathlib import Path
 import logging as logger
-import sys
-import os
 from dotenv import dotenv_values
+from typing import Dict
 
 
 class Alertbot:
     def __init__(
         self,
+        channels: Dict,
         token: str = None,
         service: str = "test_service",
         enviroment: str = "dev",
         client_type="slack",
     ) -> None:
         self.token = token
-        self.channels = self._get_channels_from_yaml()
-        self.token = token
+        self.channels = channels
         self.client_type = client_type
         self.client = self._get_client()
         self.env = enviroment
@@ -34,8 +33,8 @@ class Alertbot:
         else:
             return WebClient(token=self.token)
 
-    def _get_channels_from_yaml(self):
-        p = Path(__file__).with_name("config.yaml")
+    def get_channels_from_yaml(self, path):
+        p = Path(path)
         with p.open("r") as f:
             config = yaml.safe_load(f)
             return config["channels"]
