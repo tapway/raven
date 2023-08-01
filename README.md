@@ -6,7 +6,7 @@ pip install git+ssh://git@github.com/tapway/alertbot.git
 ```
 
 ## Usage
-Here is a basic example, with yaml config for channel names
+Here is a basic example, with yaml config for channel names. (Use absolute path)
 ```python
 from alertbot.alertbot import Alertbot
 
@@ -20,11 +20,10 @@ try:
 except Exception as e:
     bot.send_error_log("test_channel", e)
 ```
-Example without yaml file,
-from alertbot.alertbot import Alertbot
 
-# you can just manually use a dictionary instead
-# use absolute path
+Example without yaml file,
+```python
+from alertbot.alertbot import Alertbot
 channels = {test_channel: "CXXXXXXXXXX"}
 bot = Alertbot(channels=channels)
 
@@ -34,12 +33,13 @@ except Exception as e:
     bot.send_error_log("test_channel", e)
 ```
 Example yaml file,
+
 ```yaml
 channles:
     test_channel: "CXXXXXXXXXX"
 ```
 
-### Explicitely passing token (Not recommended)
+## Explicitely passing token (Not recommended)
 You can explicitely pass the token for the bot. But it is recommended to just have a `.env` file with the `BOT_TOKEN` variable, Alertbot will automatically load it.
 
 Example `.env` file,
