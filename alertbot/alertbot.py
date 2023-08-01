@@ -11,10 +11,17 @@ class Alertbot:
         self,
         channels: Dict,
         token: str = None,
-        service: str = "test_service",
+        service: str = "",
         enviroment: str = "dev",
         client_type="slack",
     ) -> None:
+        """
+        `channels`: Dictionary containing `channel_name` and `channel_id` \n
+        `token`: Token for clients, if the value is not passed, we look for BOT_TOKEN variable in .env file \n
+        `service`: Service that the bot is running on \n
+        `environment`: Environment the service is running on, default is dev \n
+        `client_type`: Client to be used to send alerts. By default it is Slack, its the only available client right now.
+        """
         self.token = token
         self.channels = channels
         self.client_type = client_type
@@ -22,18 +29,28 @@ class Alertbot:
         self.env = enviroment
         self.service = service
 
+    def _get_client_mappings(self):
+        client_dict = {
+            "slack": WebClient
+        }
+        if self.client_type in client_dict:
+            return client_dict[self.client_type]
+        else:
+            return client_dict["slack"]
+
     def _get_client(self):
         if self.token is None:
             # read from .env
             config = dotenv_values(".env")
             self.token = config["BOT_TOKEN"]
-        if self.client_type == "slack":
-            return WebClient(token=self.token)
-        else:
-            return WebClient(token=self.token)
+        client = self._get_client_mappings()
+        self.client = client(token=self.token)
 
     @staticmethod
-    def get_channels_from_yaml(path):
+    def get_channels_from_yaml(path: str) -> Dict:
+        """
+        `path`: absolute path of an yaml file containing channel names and ids
+        """
         p = Path(path)
         with p.open("r") as f:
             config = yaml.safe_load(f)
@@ -57,6 +74,10 @@ class Alertbot:
         return f"*Environment*: {self.env},\n*Service*: {self.service}\n*Stack Trace*: ```Error Class: {error.__class__}\nFilename: {filename}\nLine No: {error.__traceback__.tb_lineno}\nError: {error}\n```"
 
     def send_error_log(self, channel: str, error: Exception) -> None:
+        """
+        `channel`: Channel name of the channel to send the alert to. \n
+        `error`: An exception raised by the application.
+        """
         try:
             channel_id = self.channels[channel]
             mkdown = self._get_error_markdown(error)
