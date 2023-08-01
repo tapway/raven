@@ -27,7 +27,7 @@ setup(
     packages=find_packages(),  # required
     include_package_data=True,
     install_requires=REQUIREMENTS + PKG_REQUIREMENTS,
-    package_data={'': ['*.yml']}
+    package_data={'': ['*.yml']},
     extras_require={
         # automatically installs tensorflow
     },
