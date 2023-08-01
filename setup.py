@@ -16,7 +16,7 @@ PKG_REQUIREMENTS = ["slack-sdk"]  # pip-only requirements
 
 setup(
     name="alertbot",  # name of pypi package
-    version=0.1,  # version of pypi package
+    version=0.11,  # version of pypi package
     python_requires=">=3.7",
     license="MIT",
     description=("Tapway's monitoring tool for services."),
