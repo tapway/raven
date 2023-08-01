@@ -1,4 +1,4 @@
-# Tapway Alertbot 🚀, MIT license
+# Tapway Alertbot, MIT license
 from pathlib import Path
 
 import pkg_resources as pkg

@@ -8,7 +8,7 @@ import os
 from dotenv import dotenv_values
 
 
-class Logbot:
+class Alertbot:
     def __init__(
         self,
         token: str = None,
