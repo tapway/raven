@@ -43,7 +43,7 @@ class Alertbot:
             config = dotenv_values(".env")
             self.token = config["BOT_TOKEN"]
         client = self._get_client_mappings()
-        self.client = client(token=self.token)
+        return client(token=self.token)
 
     @staticmethod
     def get_channels_from_yaml(path: str) -> Dict:
@@ -59,18 +59,18 @@ class Alertbot:
         self, channel_id: str, msg: str
     ) -> Tuple[Exception | None, str | None]:
         try:
-            self.client.chat_postMessage(
+            res = self.client.chat_postMessage(
                 channel=channel_id,
                 text="Error Message",
                 blocks=[{"type": "section", "text": {"type": "mrkdwn", "text": msg}}],
             )
-            return None, "Successfully sent message"
+            return None, res
         except Exception as e:
             return e, None
 
     def _get_error_markdown(self, error: Exception):
         filename = error.__traceback__.tb_frame.f_code.co_filename
-        return f"*Environment*: {self.env},\n*Service*: {self.service}\n*Stack Trace*: ```Error Class: {error.__class__}\nFilename: {filename}\nLine No: {error.__traceback__.tb_lineno}\nError: {error}\n```"
+        return f"*Environment*: {self.env}\n*Service*: {self.service}\n*Stack Trace*: ```Error Class: {error.__class__}\nFilename: {filename}\nLine No: {error.__traceback__.tb_lineno}\nError: {error}\n```"
 
     def send_error_log(self, channel: str, error: Exception) -> None:
         """
@@ -81,6 +81,7 @@ class Alertbot:
             channel_id = self.channels[channel]
             mkdown = self._get_error_markdown(error)
             err, res = self._send_log(channel_id, mkdown)
+            logger.log(err)
             if err:
                 logger.debug(e)
         except Exception as e:
