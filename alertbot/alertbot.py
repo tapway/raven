@@ -6,7 +6,6 @@ import logging as logger
 from dotenv import dotenv_values
 from typing import Dict
 
-
 class Alertbot:
     def __init__(
         self,
@@ -33,7 +32,8 @@ class Alertbot:
         else:
             return WebClient(token=self.token)
 
-    def get_channels_from_yaml(self, path):
+    @staticmethod
+    def get_channels_from_yaml(path):
         p = Path(path)
         with p.open("r") as f:
             config = yaml.safe_load(f)
