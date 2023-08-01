@@ -1,4 +1,3 @@
-alertbot -i https://pypi.org/simple
 python-dotenv==1.0.0
 pyyaml==6.0.1
 slack-sdk==3.21.3
