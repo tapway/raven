@@ -13,7 +13,7 @@ from alertbot.alertbot import Alertbot
 # you can just manually use a dictionary instead
 # use absolute path
 channels = Alertbot.get_channels_from_yaml("/home/bashketchum/tests/config.yaml") 
-bot = Alertbot(channels=channels)
+bot = Alertbot(channels=channels, service="test_service")
 
 try:
     f = 1/0
@@ -25,7 +25,7 @@ Example without yaml file,
 ```python
 from alertbot.alertbot import Alertbot
 channels = {test_channel: "CXXXXXXXXXX"}
-bot = Alertbot(channels=channels)
+bot = Alertbot(channels=channels, service="test_service")
 
 try:
     f = 1/0

@@ -5,6 +5,7 @@ from pathlib import Path
 import logging as logger
 from dotenv import dotenv_values
 from typing import Dict
+import time
 
 
 class Alertbot:
@@ -69,8 +70,9 @@ class Alertbot:
             return e, None
 
     def _get_error_markdown(self, error: Exception):
+        t = time.time()
         filename = error.__traceback__.tb_frame.f_code.co_filename
-        return f"*Environment*: {self.env}\n*Service*: {self.service}\n*Stack Trace*: ```Error Class: {error.__class__}\nFilename: {filename}\nLine No: {error.__traceback__.tb_lineno}\nError: {error}\n```"
+        return f"*Time*: {t}\n*Environment*: {self.env}\n*Service*: {self.service}\n*Stack Trace*: ```Error Class: {error.__class__}\nFilename: {filename}\nLine No: {error.__traceback__.tb_lineno}\nError: {error}\n```"
 
     def send_error_log(self, channel: str, error: Exception) -> None:
         """
