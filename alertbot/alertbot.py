@@ -81,8 +81,9 @@ class Alertbot:
             channel_id = self.channels[channel]
             mkdown = self._get_error_markdown(error)
             err, res = self._send_log(channel_id, mkdown)
-            logger.log(err)
             if err:
+                logger.debug(err)
                 raise err
         except Exception as e:
+            logger.debug(e)
             raise e
