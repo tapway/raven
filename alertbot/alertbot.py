@@ -83,7 +83,5 @@ class Alertbot:
             err, res = self._send_log(channel_id, mkdown)
             if err:
                 logger.debug(err)
-                raise err
         except Exception as e:
             logger.debug(e)
-            raise e
