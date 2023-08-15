@@ -58,7 +58,7 @@ class Alertbot:
 
     def _send_log(
         self, channel_id: str, msg: str
-    ) -> Tuple[Exception | None, str | None]:
+    ) -> Tuple:
         try:
             res = self.client.chat_postMessage(
                 channel=channel_id,
