@@ -6,6 +6,7 @@ import logging as logger
 from dotenv import dotenv_values
 from typing import Dict
 import time
+import os
 
 
 class Alertbot:
@@ -40,9 +41,7 @@ class Alertbot:
 
     def _get_client(self):
         if self.token is None:
-            # read from .env
-            config = dotenv_values(".env")
-            self.token = config["BOT_TOKEN"]
+            self.token = os.environ["BOT_TOKEN"]
         client = self._get_client_mappings()
         return client(token=self.token)
 
