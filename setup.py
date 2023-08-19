@@ -19,7 +19,7 @@ setup(
     version=0.11,  # version of pypi package
     python_requires=">=3.7",
     license="MIT",
-    description=("Tapway's monitoring tool for services."),
+    description=("Tapway's alerting tool for comm. (eg - slack)"),
     long_description=README,
     long_description_content_type="text/markdown",
     url="https://github.com/tapway/alertbot",

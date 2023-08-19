@@ -38,6 +38,9 @@ class Alertbot:
             return client_dict[self.client_type]
         else:
             return client_dict["slack"]
+    def get_pod_info(self):
+        pod_name = os.environ["HOSTNAME"]
+        print(pod_name)
 
     def _get_client(self):
         if self.token is None:
