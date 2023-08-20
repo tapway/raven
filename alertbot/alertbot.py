@@ -31,6 +31,7 @@ class Alertbot:
         self.client = self._get_client()
         self.env = enviroment
         self.service = service
+        self.get_pod_info()
 
     def _get_client_mappings(self):
         client_dict = {"slack": WebClient}
@@ -38,13 +39,15 @@ class Alertbot:
             return client_dict[self.client_type]
         else:
             return client_dict["slack"]
+    
     def get_pod_info(self):
         pod_name = os.environ["HOSTNAME"]
         print(pod_name)
 
     def _get_client(self):
         if self.token is None:
-            self.token = os.environ["BOT_TOKEN"]
+            config = dotenv_values(".env")
+            self.token = config["BOT_TOKEN"]
         client = self._get_client_mappings()
         return client(token=self.token)
 
