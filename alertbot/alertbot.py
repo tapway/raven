@@ -25,13 +25,13 @@ class Alertbot:
         `environment`: Environment the service is running on, default is dev \n
         `client_type`: Client to be used to send alerts. By default it is Slack, its the only available client right now.
         """
+        print(f'Initializing alertbot at {self.get_pod_info()}')
         self.token = token
         self.channels = channels
         self.client_type = client_type
         self.client = self._get_client()
         self.env = enviroment
         self.service = service
-        self.get_pod_info()
 
     def _get_client_mappings(self):
         client_dict = {"slack": WebClient}
