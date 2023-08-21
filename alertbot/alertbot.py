@@ -2,11 +2,17 @@ from typing import Tuple
 from slack_sdk import WebClient
 import yaml
 from pathlib import Path
-import logging as logger
 from dotenv import dotenv_values
 from typing import Dict
 import time
 import os
+import logging
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s -- [%(module)s:%(lineno)s - %(levelname)s] -- %(message)s",
+)
+logger = logging.getLogger(__name__)
 
 
 class Alertbot:
@@ -42,7 +48,7 @@ class Alertbot:
     
     def get_pod_info(self):
         pod_name = os.environ["HOSTNAME"]
-        print(pod_name)
+        logger.info(f"Pod info: {pod_name}")
 
     def _get_client(self):
         if self.token is None:
