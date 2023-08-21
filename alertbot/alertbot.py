@@ -2,7 +2,6 @@ from typing import Tuple
 from slack_sdk import WebClient
 import yaml
 from pathlib import Path
-from dotenv import dotenv_values
 from typing import Dict
 import time
 import os
