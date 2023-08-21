@@ -1,5 +1,7 @@
 # Alertbot
 
+[![Python package](https://github.com/tapway/alertbot/actions/workflows/python-package.yml/badge.svg)](https://github.com/tapway/alertbot/actions/workflows/python-package.yml)
+
 ## Installation
 ```shell
 pip install git+ssh://git@github.com/tapway/alertbot.git
@@ -12,8 +14,8 @@ from alertbot.alertbot import Alertbot
 
 # you can just manually use a dictionary instead
 # use absolute path
-channels = Alertbot.get_channels_from_yaml("/home/bashketchum/tests/config.yaml") 
-bot = Alertbot(channels=channels, service="test_service")
+channels = Alertbot.get_channels_from_yaml("config.yaml") 
+Alertbot(channels=channels, service="test_service", token=load_secret_from_aws_sm(secret_name=<YOUR_SECRET_NAME>))
 
 try:
     f = 1/0
@@ -25,7 +27,7 @@ Example without yaml file,
 ```python
 from alertbot.alertbot import Alertbot
 channels = {test_channel: "CXXXXXXXXXX"}
-bot = Alertbot(channels=channels, service="test_service")
+Alertbot(channels=channels, service="test_service", token=load_secret_from_aws_sm(secret_name=<YOUR_SECRET_NAME>))
 
 try:
     f = 1/0
@@ -37,12 +39,4 @@ Example yaml file,
 ```yaml
 channles:
     test_channel: "CXXXXXXXXXX"
-```
-
-## Explicitely passing token (Not recommended)
-You can explicitely pass the token for the bot. But it is recommended to just have a `.env` file with the `BOT_TOKEN` variable, Alertbot will automatically load it.
-
-Example `.env` file,
-```
-BOT_TOKEN=xoxb-XXXXXXXXXX-XXXXXXXXXXXXXX-XXXXXXXXXXXXXXXXXXXXXXXXX
 ```
