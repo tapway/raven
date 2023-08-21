@@ -22,5 +22,6 @@ def load_secret_from_aws_sm(secret_name="alertbot/slack"):
         raise e
 
     # Decrypts secret using the associated KMS key.
+    print(get_secret_value_response)
     secret = get_secret_value_response['BOT_TOKEN']
     return secret
