@@ -46,6 +46,7 @@ class Alertbot:
             return client_dict["slack"]
     
     def get_pod_info(self):
+        logger.log(os.environ)
         pod_name = os.environ["HOSTNAME"]
         return pod_name
 
