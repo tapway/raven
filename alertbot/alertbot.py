@@ -51,9 +51,6 @@ class Alertbot:
         logger.info(f"Pod info: {pod_name}")
 
     def _get_client(self):
-        if self.token is None:
-            config = dotenv_values(".env")
-            self.token = config["BOT_TOKEN"]
         client = self._get_client_mappings()
         return client(token=self.token)
 
