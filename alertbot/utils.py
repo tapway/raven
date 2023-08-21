@@ -1,5 +1,6 @@
 import boto3
 from botocore.exceptions import ClientError
+import json
 
 
 def load_secret_from_aws_sm(secret_name="alertbot/slack"):
@@ -22,6 +23,5 @@ def load_secret_from_aws_sm(secret_name="alertbot/slack"):
         raise e
 
     # Decrypts secret using the associated KMS key.
-    print(get_secret_value_response)
-    secret = get_secret_value_response['BOT_TOKEN']
-    return secret
+    secret = json.loads(get_secret_value_response['SecretString'])
+    return secret["BOT_TOKEN"]
