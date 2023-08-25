@@ -7,6 +7,7 @@ name = "pypi"
 slack-sdk = "*"
 python-dotenv = "*"
 pyyaml = "*"
+boto3 = "*"
 
 [dev-packages]
 

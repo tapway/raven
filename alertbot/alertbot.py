@@ -1,8 +1,6 @@
 from typing import Tuple
 from slack_sdk import WebClient
-import yaml
-from pathlib import Path
-from typing import Dict
+from typing import Dict, Callable
 import time
 import os
 import logging
@@ -15,6 +13,7 @@ logger = logging.getLogger(__name__)
 
 
 class Alertbot:
+    bot_instance = None
     def __init__(
         self,
         channels: Dict,
@@ -22,6 +21,7 @@ class Alertbot:
         service: str = "",
         enviroment: str = "dev",
         client_type="slack",
+        cloudwatch=False
     ) -> None:
         """
         `channels`: Dictionary containing `channel_name` and `channel_id` \n
@@ -30,7 +30,9 @@ class Alertbot:
         `environment`: Environment the service is running on, default is dev \n
         `client_type`: Client to be used to send alerts. By default it is Slack, its the only available client right now.
         """
-        logger.info(f'Initializing alertbot at {self.get_pod_info()}')
+        if cloudwatch:
+            logger.info(f'Initializing alertbot at {self.get_pod_info()}')
+        self.cloudwatch = cloudwatch
         self.token = token
         self.channels = channels
         self.client_type = client_type
@@ -46,23 +48,29 @@ class Alertbot:
             return client_dict["slack"]
     
     def get_pod_info(self):
-        logger.log(os.environ)
         pod_name = os.environ["HOSTNAME"]
         return pod_name
 
     def _get_client(self):
         client = self._get_client_mappings()
         return client(token=self.token)
-
+        
     @staticmethod
-    def get_channels_from_yaml(path: str) -> Dict:
-        """
-        `path`: absolute path of an yaml file containing channel names and ids
-        """
-        p = Path(path)
-        with p.open("r") as f:
-            config = yaml.safe_load(f)
-            return config["channels"]
+    def get_alertbot_instance(token, channels):
+        if not Alertbot.bot_instance:
+            channels = channels
+            Alertbot.bot_instance = Alertbot(channels=channels, service="launcher_service", token=token)
+        return Alertbot.bot_instance
+    
+    @staticmethod
+    def error_alert(function:Callable):
+        def _alertbot_wrapper(*args, **kwargs):
+            try:
+                function(*args, **kwargs)
+            except Exception as e:
+                Alertbot.bot_instance().
+        return _alertbot_wrapper
+
 
     def _send_log(
         self, channel_id: str, msg: str
@@ -77,10 +85,25 @@ class Alertbot:
         except Exception as e:
             return e, None
 
+    def _get_cloudwatch_url(self):
+        return ""
+    
     def _get_error_markdown(self, error: Exception):
         t = time.time()
         filename = error.__traceback__.tb_frame.f_code.co_filename
-        return f"*Time*: {t}\n*Environment*: {self.env}\n*Service*: {self.service}\n*Stack Trace*: ```Error Class: {error.__class__}\nFilename: {filename}\nLine No: {error.__traceback__.tb_lineno}\nError: {error}\n```"
+        if not self.cloudwatch:
+            return f"*Time*: {t}\n*Environment*: {self.env}\n*Service*: {self.service}\n*Stack Trace*: ```Error Class: {error.__class__}\nFilename: {filename}\nLine No: {error.__traceback__.tb_lineno}\nError: {error}\n```"
+        else:
+            return f"*Time*: {t}\n*Environment*: {self.env}\n*Service*: {self.service}\n*Stack Trace*: ```Error Class: {error.__class__}\nFilename: {filename}\nLine No: {error.__traceback__.tb_lineno}\nError: {error}\n``` *cloudwatch*:{self._get_cloudwatch_url()}"
+    
+    def send_generic_log(self, channel:str, msg:str) -> None:
+        try:
+            channel_id = self.channels[channel]
+            err, res = self._send_log(channel_id, msg)
+            if err:
+                logger.debug(err)
+        except Exception as e:
+            logger.debug(e)
 
     def send_error_log(self, channel: str, error: Exception) -> None:
         """
