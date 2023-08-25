@@ -55,20 +55,28 @@ class Alertbot:
         return client(token=self.token)
         
     @staticmethod
-    def get_alertbot_instance(token, channels):
+    def get_alertbot_instance(channels: Dict,
+        token: str = None,
+        service: str = "",
+        enviroment: str = "dev",
+        client_type="slack",
+        cloudwatch=False
+    ):
         if not Alertbot.bot_instance:
             channels = channels
-            Alertbot.bot_instance = Alertbot(channels=channels, service="launcher_service", token=token)
+            Alertbot.bot_instance = Alertbot(channels=channels, service=service, token=token, enviroment=enviroment, client_type=client_type, cloudwatch=cloudwatch)
         return Alertbot.bot_instance
     
-    @staticmethod
-    def error_alert(function:Callable):
-        def _alertbot_wrapper(*args, **kwargs):
-            try:
-                function(*args, **kwargs)
-            except Exception as e:
-                Alertbot.bot_instance().send_error_log(e)
-        return _alertbot_wrapper
+    def error_alert(self, channel:str):
+        def _error_alert(fn):
+            def wrapper(*args, **kwargs):
+                try:
+                    res = fn(*args, **kwargs)
+                    return res
+                except Exception as e:
+                    self.send_error_log(channel=channel, error=e)
+            return wrapper
+        return _error_alert
 
 
     def _send_log(
