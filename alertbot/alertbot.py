@@ -11,7 +11,6 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-
 class Alertbot:
     bot_instance = None
     def __init__(
@@ -68,7 +67,7 @@ class Alertbot:
             try:
                 function(*args, **kwargs)
             except Exception as e:
-                Alertbot.bot_instance().
+                Alertbot.bot_instance().send_error_log(e)
         return _alertbot_wrapper
 
 
