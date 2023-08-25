@@ -1,7 +1,18 @@
 import boto3
 from botocore.exceptions import ClientError
 import json
+from typing import Dict
+import yaml
+from pathlib import Path
 
+def get_channels_from_yaml(path: str) -> Dict:
+        """
+        `path`: absolute path of an yaml file containing channel names and ids
+        """
+        p = Path(path)
+        with p.open("r") as f:
+            config = yaml.safe_load(f)
+            return config["channels"]
 
 def load_secret_from_aws_sm(secret_name="alertbot/slack"):
     secret_name = secret_name
