@@ -97,7 +97,7 @@ class Alertbot:
         return ""
     
     def _get_error_markdown(self, error: Exception):
-        t = datetime.datetime.now()
+        t = datetime.datetime.utcnow() + datetime.timedelta(hours=8)
         t = t.strftime('%H:%M:%S')
         filename = error.__traceback__.tb_frame.f_code.co_filename
         if not self.cloudwatch:
