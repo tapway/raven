@@ -12,7 +12,7 @@ REQUIREMENTS = [
     f"{x.name}{x.specifier}"
     for x in pkg.parse_requirements((PARENT / "requirements.txt").read_text())
 ]
-PKG_REQUIREMENTS = ["slack-sdk"]  # pip-only requirements
+PKG_REQUIREMENTS = ["slack-sdk", "boto3"]  # pip-only requirements
 
 setup(
     name="alertbot",  # name of pypi package
