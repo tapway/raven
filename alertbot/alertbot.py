@@ -4,6 +4,7 @@ from typing import Dict, Callable
 import time
 import os
 import logging
+import datetime
 
 logging.basicConfig(
     level=logging.INFO,
@@ -96,7 +97,8 @@ class Alertbot:
         return ""
     
     def _get_error_markdown(self, error: Exception):
-        t = time.time()
+        t = datetime.datetime.now()
+        t = t.strftime('%H:%M:%S')
         filename = error.__traceback__.tb_frame.f_code.co_filename
         if not self.cloudwatch:
             return f"*Time*: {t}\n*Environment*: {self.env}\n*Service*: {self.service}\n*Stack Trace*: ```Error Class: {error.__class__}\nFilename: {filename}\nLine No: {error.__traceback__.tb_lineno}\nError: {error}\n```"
