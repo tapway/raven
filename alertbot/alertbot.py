@@ -74,9 +74,9 @@ class Alertbot:
             @functools.wraps(fn)
             def wrapper(*args, **kwargs):
                 try:
-                    res = fn(*args, **kwargs)
-                    return res
+                    return fn(*args, **kwargs)
                 except Exception as e:
+                    print(e)
                     self.send_error_log(channel=channel, error=e)
             return wrapper
         return _error_alert
