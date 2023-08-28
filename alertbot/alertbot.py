@@ -5,6 +5,8 @@ import os
 import logging
 import datetime
 import functools
+import sys
+import traceback
 
 logging.basicConfig(
     level=logging.INFO,
@@ -76,7 +78,6 @@ class Alertbot:
                 try:
                     return fn(*args, **kwargs)
                 except Exception as e:
-                    print(e)
                     self.send_error_log(channel=channel, error=e)
             return wrapper
         return _error_alert
@@ -98,11 +99,11 @@ class Alertbot:
     def _get_error_markdown(self, error: Exception):
         t = datetime.datetime.utcnow() + datetime.timedelta(hours=8)
         t = t.strftime('%H:%M:%S')
-        filename = error.__traceback__.tb_frame.f_code.co_filename
+        type, value, tb = sys.exc_info()
         if not self.cloudwatch:
-            return f"*Time*: {t}\n*Environment*: {self.env}\n*Service*: {self.service}\n*Stack Trace*: ```Error Class: {error.__class__}\nFilename: {filename}\nLine No: {error.__traceback__.tb_lineno}\nError: {error}\n```"
+            return f"*Time*: {t}\n*Environment*: {self.env}\n*Service*: {self.service}\n*Stack Trace*: ```Type: {type}\nTraceback: {traceback.extract_tb(tb)}\nError: {value}\n```"
         else:
-            return f"*Time*: {t}\n*Environment*: {self.env}\n*Service*: {self.service}\n*Stack Trace*: ```Error Class: {error.__class__}\nFilename: {filename}\nLine No: {error.__traceback__.tb_lineno}\nError: {error}\n``` *cloudwatch*:{self.cloudwatch}"
+            return f"*Time*: {t}\n*Environment*: {self.env}\n*Service*: {self.service}\n*Stack Trace*: ```Type: {type}\nTraceback: {traceback.extract_tb(tb)}\nError: {value}\n```\n*cloudwatch*:{self.cloudwatch}"
     
     def send_generic_log(self, channel:str, msg:str) -> None:
         try:
