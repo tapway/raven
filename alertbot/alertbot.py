@@ -1,7 +1,6 @@
 from typing import Tuple
 from slack_sdk import WebClient
-from typing import Dict, Callable
-import time
+from typing import Dict
 import os
 import logging
 import datetime
@@ -21,7 +20,7 @@ class Alertbot:
         service: str = "",
         enviroment: str = "dev",
         client_type="slack",
-        cloudwatch=False
+        cloudwatch: str = None,
     ) -> None:
         """
         `channels`: Dictionary containing `channel_name` and `channel_id` \n
@@ -31,8 +30,8 @@ class Alertbot:
         `client_type`: Client to be used to send alerts. By default it is Slack, its the only available client right now.
         """
         if cloudwatch:
-            logger.info(f'Initializing alertbot at {self.get_pod_info()}')
-        self.cloudwatch = cloudwatch
+            logger.info(f'Initializing alertbot at {self._get_pod_info()}')
+        self.cloudwatch = cloudwatch + self._get_pod_info()
         self.token = token
         self.channels = channels
         self.client_type = client_type
@@ -47,7 +46,7 @@ class Alertbot:
         else:
             return client_dict["slack"]
     
-    def get_pod_info(self):
+    def _get_pod_info(self):
         pod_name = os.environ["HOSTNAME"]
         return pod_name
 
@@ -92,9 +91,6 @@ class Alertbot:
             return None, res
         except Exception as e:
             return e, None
-
-    def _get_cloudwatch_url(self):
-        return ""
     
     def _get_error_markdown(self, error: Exception):
         t = datetime.datetime.utcnow() + datetime.timedelta(hours=8)
@@ -103,7 +99,7 @@ class Alertbot:
         if not self.cloudwatch:
             return f"*Time*: {t}\n*Environment*: {self.env}\n*Service*: {self.service}\n*Stack Trace*: ```Error Class: {error.__class__}\nFilename: {filename}\nLine No: {error.__traceback__.tb_lineno}\nError: {error}\n```"
         else:
-            return f"*Time*: {t}\n*Environment*: {self.env}\n*Service*: {self.service}\n*Stack Trace*: ```Error Class: {error.__class__}\nFilename: {filename}\nLine No: {error.__traceback__.tb_lineno}\nError: {error}\n``` *cloudwatch*:{self._get_cloudwatch_url()}"
+            return f"*Time*: {t}\n*Environment*: {self.env}\n*Service*: {self.service}\n*Stack Trace*: ```Error Class: {error.__class__}\nFilename: {filename}\nLine No: {error.__traceback__.tb_lineno}\nError: {error}\n``` *cloudwatch*:{self.cloudwatch}"
     
     def send_generic_log(self, channel:str, msg:str) -> None:
         try:

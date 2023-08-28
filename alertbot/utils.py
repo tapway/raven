@@ -5,7 +5,7 @@ from typing import Dict
 import yaml
 from pathlib import Path
 
-def get_channels_from_yaml(path: str) -> Dict:
+def load_channels_from_yaml(path: str) -> Dict:
         """
         `path`: absolute path of an yaml file containing channel names and ids
         """
@@ -13,6 +13,15 @@ def get_channels_from_yaml(path: str) -> Dict:
         with p.open("r") as f:
             config = yaml.safe_load(f)
             return config["channels"]
+        
+def load_cloudwatch_prefix_from_yaml(path: str) -> Dict:
+        """
+        `path`: absolute path of an yaml file containing cloudwatch url prefix
+        """
+        p = Path(path)
+        with p.open("r") as f:
+            config = yaml.safe_load(f)
+            return config["cloudwatch"]
 
 def load_secret_from_aws_sm(secret_name="alertbot/slack"):
     secret_name = secret_name
