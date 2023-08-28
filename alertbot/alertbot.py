@@ -29,9 +29,10 @@ class Alertbot:
         `environment`: Environment the service is running on, default is dev \n
         `client_type`: Client to be used to send alerts. By default it is Slack, its the only available client right now.
         """
-        if cloudwatch:
+        self.cloudwatch = None
+        if cloudwatch and "HOSTNAME" in os.environ:
             logger.info(f'Initializing alertbot at {self._get_pod_info()}')
-        self.cloudwatch = cloudwatch + self._get_pod_info()
+            self.cloudwatch = cloudwatch + self._get_pod_info()
         self.token = token
         self.channels = channels
         self.client_type = client_type
