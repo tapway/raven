@@ -4,6 +4,7 @@ from typing import Dict
 import os
 import logging
 import datetime
+import functools
 
 logging.basicConfig(
     level=logging.INFO,
@@ -70,6 +71,7 @@ class Alertbot:
     
     def error_alert(self, channel:str):
         def _error_alert(fn):
+            @functools.wraps(fn)
             def wrapper(*args, **kwargs):
                 try:
                     res = fn(*args, **kwargs)
