@@ -1,6 +1,6 @@
 # Alertbot
+[![Python package](https://github.com/tapway/alertbot/actions/workflows/python-package.yml/badge.svg)](https://github.com/tapway/alertbot/actions/workflows/python-package.yml) <br>
 A rather opinionated utility bot to raise alerts in comms in case of runtime exceptions.
-[![Python package](https://github.com/tapway/alertbot/actions/workflows/python-package.yml/badge.svg)](https://github.com/tapway/alertbot/actions/workflows/python-package.yml)
 
 ## Installation
 ```shell
