@@ -28,7 +28,7 @@ def alert(
                     enviroment=enviroment,
                     client_type=client_type,
                     cloudwatch=load_cloudwatch_prefix_from_yaml(config),
-                    custom_fields=dict(kwargs)
+                    custom_fields=kwargs
                 )
                 bot.send_error_log(channel=channel, error=e)
         return wrapper
