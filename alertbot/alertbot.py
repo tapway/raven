@@ -96,9 +96,9 @@ class Alertbot:
         t = t.strftime("%H:%M:%S")
         type, value, tb = sys.exc_info()
         if not self.cloudwatch:
-            return f"*Time*: {t}\n*Environment*: {self.env}\n*Service*: {self.service}\n*Stack Trace*: ```Type: {type}\nTraceback: {traceback.format_exc()}\nError: {value}\n```"
+            return f"*Time*: `{t}`\n*Environment*: `{self.env}`\n*Service*: `{self.service}`\n*Stack Trace*: ```Type: {type}\nTraceback: {traceback.format_exc()}\nError: {value}\n```"
         else:
-            return f"*Time*: {t}\n*Environment*: {self.env}\n*Service*: {self.service}\n*Stack Trace*: ```Type: {type}\nTraceback: {traceback.format_exc()}\nError: {value}\n```\n*cloudwatch*:{self.cloudwatch}"
+            return f"*Time*: `{t}`\n*Environment*: `{self.env}`\n*Service*: `{self.service}`\n*Stack Trace*: ```Type: {type}\nTraceback: {traceback.format_exc()}\nError: {value}\n```\n*Cloudwatch*: {self.cloudwatch}"
 
     def send_generic_log(self, channel: str, msg: str) -> None:
         try:
