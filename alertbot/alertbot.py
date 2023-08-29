@@ -89,15 +89,13 @@ class Alertbot:
             )
             return None, res
         except Exception as e:
-            logger.log(e)
             return e, None
 
     def _get_error_markdown(self, error: Exception):
         t = datetime.datetime.utcnow() + datetime.timedelta(hours=8)
         t = t.strftime("%m/%d/%Y, %H:%M:%S")
         type, value, tb = sys.exc_info()
-        print(self.custom_fields)
-        custom_fields = [f"*{key}*: {value}\n" for key, value in self.custom_fields]
+        custom_fields = [f"*{key}*: {value}\n" for key, value in self.custom_fields.items()]
         if not self.cloudwatch:
             mkdown = f"*Time*: `{t}`\n*Environment*: `{self.env}`\n*Service*: `{self.service}`\n*Stack Trace*: ```Type: {type}\nTraceback: {traceback.format_exc()}\nError: {value}\n```"
             for item in custom_fields:
@@ -128,6 +126,6 @@ class Alertbot:
             mkdown = self._get_error_markdown(error)
             err, res = self._send_log(channel_id, mkdown)
             if err:
-                logger.log(err)
+                logger.debug(err)
         except Exception as e:
-            logger.log(e)
+            logger.debug(e)
