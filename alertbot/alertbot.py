@@ -93,7 +93,7 @@ class Alertbot:
 
     def _get_error_markdown(self, error: Exception):
         t = datetime.datetime.utcnow() + datetime.timedelta(hours=8)
-        t = t.strftime("%H:%M:%S")
+        t = t.strftime("%m/%d/%Y, %H:%M:%S")
         type, value, tb = sys.exc_info()
         if not self.cloudwatch:
             return f"*Time*: `{t}`\n*Environment*: `{self.env}`\n*Service*: `{self.service}`\n*Stack Trace*: ```Type: {type}\nTraceback: {traceback.format_exc()}\nError: {value}\n```"
