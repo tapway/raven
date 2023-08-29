@@ -15,8 +15,6 @@ logger = logging.getLogger(__name__)
 
 
 class Alertbot:
-    bot_instance = None
-
     def __init__(
         self,
         channels: Dict,
@@ -25,6 +23,7 @@ class Alertbot:
         enviroment: str = "dev",
         client_type="slack",
         cloudwatch: str = None,
+        custom_fields: Dict = None
     ) -> None:
         """
         `channels`: Dictionary containing `channel_name` and `channel_id` \n
@@ -43,6 +42,7 @@ class Alertbot:
         self.client = self._get_client()
         self.env = enviroment
         self.service = service
+        self.custom_fields = custom_fields
 
     def _get_client_mappings(self):
         client_dict = {"slack": WebClient}
@@ -67,18 +67,18 @@ class Alertbot:
         enviroment: str = "dev",
         client_type="slack",
         cloudwatch=False,
+        custom_fields=None
     ):
-        if not Alertbot.bot_instance:
-            channels = channels
-            Alertbot.bot_instance = Alertbot(
+        bot_instance = Alertbot(
                 channels=channels,
                 service=service,
                 token=token,
                 enviroment=enviroment,
                 client_type=client_type,
                 cloudwatch=cloudwatch,
+                custom_fields=custom_fields
             )
-        return Alertbot.bot_instance
+        return bot_instance
 
     def _send_log(self, channel_id: str, msg: str) -> Tuple:
         try:
@@ -95,10 +95,17 @@ class Alertbot:
         t = datetime.datetime.utcnow() + datetime.timedelta(hours=8)
         t = t.strftime("%m/%d/%Y, %H:%M:%S")
         type, value, tb = sys.exc_info()
+        custom_fields = [f"*{key}*: {value}\n" for key, value in self.custom_fields]
         if not self.cloudwatch:
-            return f"*Time*: `{t}`\n*Environment*: `{self.env}`\n*Service*: `{self.service}`\n*Stack Trace*: ```Type: {type}\nTraceback: {traceback.format_exc()}\nError: {value}\n```"
+            mkdown = f"*Time*: `{t}`\n*Environment*: `{self.env}`\n*Service*: `{self.service}`\n*Stack Trace*: ```Type: {type}\nTraceback: {traceback.format_exc()}\nError: {value}\n```"
+            for item in custom_fields:
+                mkdown += item
+            return mkdown
         else:
-            return f"*Time*: `{t}`\n*Environment*: `{self.env}`\n*Service*: `{self.service}`\n*Stack Trace*: ```Type: {type}\nTraceback: {traceback.format_exc()}\nError: {value}\n```\n*Cloudwatch*: {self.cloudwatch}"
+            mkdown = f"*Time*: `{t}`\n*Environment*: `{self.env}`\n*Service*: `{self.service}`\n*Stack Trace*: ```Type: {type}\nTraceback: {traceback.format_exc()}\nError: {value}\n```\n*Cloudwatch*: {self.cloudwatch}\n"
+            for item in custom_fields:
+                mkdown += item
+            return mkdown
 
     def send_generic_log(self, channel: str, msg: str) -> None:
         try:
