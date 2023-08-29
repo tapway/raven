@@ -8,13 +8,12 @@ import functools
 from .alertbot import Alertbot
 
 def alert(
-    channels: Dict,
+    config: str,
     token: str = None,
     service: str = "",
     enviroment: str = "dev",
     client_type="slack",
-    cloudwatch: str = None,
-    channel: str = "",
+    channel: str = ""
 ):
     def _alert(fn):
         @functools.wraps(fn)
@@ -23,12 +22,12 @@ def alert(
                 return fn(*args, **kwargs)
             except Exception as e:
                 bot = Alertbot.get_alertbot_instance(
-                    channels=load_channels_from_yaml(channels),
+                    channels=load_channels_from_yaml(config),
                     token=load_secret_from_aws_sm(token),
                     service=service,
                     enviroment=enviroment,
                     client_type=client_type,
-                    cloudwatch=cloudwatch
+                    cloudwatch=load_cloudwatch_prefix_from_yaml(config)
                 )
                 bot.send_error_log(channel=channel, error=e)
         return wrapper
@@ -51,8 +50,10 @@ def load_cloudwatch_prefix_from_yaml(path: str) -> Dict:
     p = Path(path)
     with p.open("r") as f:
         config = yaml.safe_load(f)
-        return config["cloudwatch"]
-
+        if 'cloudwatch' in config:
+            return config["cloudwatch"]
+        else:
+            return None
 
 def load_secret_from_aws_sm(secret_name="alertbot/slack"):
     secret_name = secret_name
