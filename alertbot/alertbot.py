@@ -89,6 +89,7 @@ class Alertbot:
             )
             return None, res
         except Exception as e:
+            logger.log(e)
             return e, None
 
     def _get_error_markdown(self, error: Exception):
