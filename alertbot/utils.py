@@ -23,8 +23,8 @@ def error_alert(
                 return fn(*args, **kwargs)
             except Exception as e:
                 bot = Alertbot.get_alertbot_instance(
-                    channels=channels,
-                    token=token,
+                    channels=load_channels_from_yaml(channels),
+                    token=load_secret_from_aws_sm(token),
                     service=service,
                     enviroment=enviroment,
                     client_type=client_type,
@@ -33,7 +33,6 @@ def error_alert(
                 bot.send_error_log(channel=channel, error=e)
         return wrapper
     return _error_alert
-
 
 def load_channels_from_yaml(path: str) -> Dict:
     """
