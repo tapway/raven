@@ -7,7 +7,7 @@ from pathlib import Path
 import functools
 from .alertbot import Alertbot
 
-def error_alert(
+def alert(
     channels: Dict,
     token: str = None,
     service: str = "",
@@ -16,7 +16,7 @@ def error_alert(
     cloudwatch: str = None,
     channel: str = "",
 ):
-    def _error_alert(fn):
+    def _alert(fn):
         @functools.wraps(fn)
         def wrapper(*args, **kwargs):
             try:
@@ -32,7 +32,7 @@ def error_alert(
                 )
                 bot.send_error_log(channel=channel, error=e)
         return wrapper
-    return _error_alert
+    return _alert
 
 def load_channels_from_yaml(path: str) -> Dict:
     """
