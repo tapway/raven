@@ -127,6 +127,6 @@ class Alertbot:
             mkdown = self._get_error_markdown(error)
             err, res = self._send_log(channel_id, mkdown)
             if err:
-                logger.debug(err)
+                logger.log(err)
         except Exception as e:
-            logger.debug(e)
+            logger.log(e)
