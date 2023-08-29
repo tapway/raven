@@ -4,7 +4,6 @@ from typing import Dict
 import os
 import logging
 import datetime
-import functools
 import sys
 import traceback
 
@@ -14,8 +13,10 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+
 class Alertbot:
     bot_instance = None
+
     def __init__(
         self,
         channels: Dict,
@@ -34,7 +35,7 @@ class Alertbot:
         """
         self.cloudwatch = None
         if cloudwatch and "HOSTNAME" in os.environ:
-            logger.info(f'Initializing alertbot at {self._get_pod_info()}')
+            logger.info(f"Initializing alertbot at {self._get_pod_info()}")
             self.cloudwatch = cloudwatch + self._get_pod_info()
         self.token = token
         self.channels = channels
@@ -49,7 +50,7 @@ class Alertbot:
             return client_dict[self.client_type]
         else:
             return client_dict["slack"]
-    
+
     def _get_pod_info(self):
         pod_name = os.environ["HOSTNAME"]
         return pod_name
@@ -57,35 +58,29 @@ class Alertbot:
     def _get_client(self):
         client = self._get_client_mappings()
         return client(token=self.token)
-        
+
     @staticmethod
-    def get_alertbot_instance(channels: Dict,
+    def get_alertbot_instance(
+        channels: Dict,
         token: str = None,
         service: str = "",
         enviroment: str = "dev",
         client_type="slack",
-        cloudwatch=False
+        cloudwatch=False,
     ):
         if not Alertbot.bot_instance:
             channels = channels
-            Alertbot.bot_instance = Alertbot(channels=channels, service=service, token=token, enviroment=enviroment, client_type=client_type, cloudwatch=cloudwatch)
+            Alertbot.bot_instance = Alertbot(
+                channels=channels,
+                service=service,
+                token=token,
+                enviroment=enviroment,
+                client_type=client_type,
+                cloudwatch=cloudwatch,
+            )
         return Alertbot.bot_instance
-    
-    def error_alert(self, channel:str):
-        def _error_alert(fn):
-            @functools.wraps(fn)
-            def wrapper(*args, **kwargs):
-                try:
-                    return fn(*args, **kwargs)
-                except Exception as e:
-                    self.send_error_log(channel=channel, error=e)
-            return wrapper
-        return _error_alert
 
-
-    def _send_log(
-        self, channel_id: str, msg: str
-    ) -> Tuple:
+    def _send_log(self, channel_id: str, msg: str) -> Tuple:
         try:
             res = self.client.chat_postMessage(
                 channel=channel_id,
@@ -95,17 +90,17 @@ class Alertbot:
             return None, res
         except Exception as e:
             return e, None
-    
+
     def _get_error_markdown(self, error: Exception):
         t = datetime.datetime.utcnow() + datetime.timedelta(hours=8)
-        t = t.strftime('%H:%M:%S')
+        t = t.strftime("%H:%M:%S")
         type, value, tb = sys.exc_info()
         if not self.cloudwatch:
             return f"*Time*: {t}\n*Environment*: {self.env}\n*Service*: {self.service}\n*Stack Trace*: ```Type: {type}\nTraceback: {traceback.format_exc()}\nError: {value}\n```"
         else:
             return f"*Time*: {t}\n*Environment*: {self.env}\n*Service*: {self.service}\n*Stack Trace*: ```Type: {type}\nTraceback: {traceback.format_exc()}\nError: {value}\n```\n*cloudwatch*:{self.cloudwatch}"
-    
-    def send_generic_log(self, channel:str, msg:str) -> None:
+
+    def send_generic_log(self, channel: str, msg: str) -> None:
         try:
             channel_id = self.channels[channel]
             err, res = self._send_log(channel_id, msg)
