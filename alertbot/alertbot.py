@@ -95,7 +95,7 @@ class Alertbot:
         t = datetime.datetime.utcnow() + datetime.timedelta(hours=8)
         t = t.strftime("%m/%d/%Y, %H:%M:%S")
         type, value, tb = sys.exc_info()
-        custom_fields = [f"*{key}*: {value}\n" for key, value in self.custom_fields.items()]
+        custom_fields = [f"*{key}*: `{value}`\n" for key, value in self.custom_fields.items()]
         if not self.cloudwatch:
             mkdown = f"*Time*: `{t}`\n*Environment*: `{self.env}`\n*Service*: `{self.service}`\n*Stack Trace*: ```Type: {type}\nTraceback: {traceback.format_exc()}\nError: {value}\n```"
             for item in custom_fields:
