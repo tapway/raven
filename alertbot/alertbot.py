@@ -58,7 +58,7 @@ class Alertbot:
     ):
         try:
             channel_id = (
-                channels[channels.keys()[0]] if not channel else channels[channel]
+                channels[list(channels.keys())[0]] if not channel else channels[channel]
             )
             cloudwatch = None
             if cloudwatch and "HOSTNAME" in os.environ:
@@ -160,7 +160,9 @@ class Alertbot:
     ) -> None:
         try:
             channel_id = (
-                channels[channels.keys()[0]] if not channel_id else channels[channel]
+                channels[list(channels.keys())[0]]
+                if not channel_id
+                else channels[channel]
             )
             err, res = self._send_log(channel_id, msg)
             if err:
@@ -175,7 +177,7 @@ class Alertbot:
         """
         try:
             channel_id = (
-                self.channels[self.channels.keys()[0]]
+                self.channels[list(self.channels.keys())[0]]
                 if not channel_id
                 else self.channels[channel]
             )
