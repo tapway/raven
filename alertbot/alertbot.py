@@ -48,8 +48,7 @@ class Alertbot:
     @staticmethod
     def send_error_logs(
         channels: Dict,
-        channel: str,
-        error: Exception,
+        channel: str = None,
         token: str = None,
         service: str = "",
         enviroment: str = "dev",
@@ -58,7 +57,9 @@ class Alertbot:
         custom_fields: Dict = None,
     ):
         try:
-            channel_id = channels[channel]
+            channel_id = (
+                channels[channels.keys()[0]] if not channel_id else channels[channel]
+            )
             cloudwatch = None
             if cloudwatch and "HOSTNAME" in os.environ:
                 cloudwatch = cloudwatch + Alertbot._get_pod_info()
@@ -67,7 +68,6 @@ class Alertbot:
                 service=service,
                 cloudwatch=cloudwatch,
                 custom_fields=custom_fields,
-                error=error,
             )
             client = Alertbot._get_client(token=token, client_type=client_type)
             err, res = Alertbot._send_log(client, channel_id, mkdown)
@@ -131,7 +131,7 @@ class Alertbot:
 
     @staticmethod
     def get_error_markdown(
-        env: str, service: str, cloudwatch: Any, custom_fields: Dict, error: Exception
+        env: str, service: str, cloudwatch: Any, custom_fields: Dict
     ):
         t = datetime.datetime.utcnow() + datetime.timedelta(hours=8)
         t = t.strftime("%m/%d/%Y, %H:%M:%S")
@@ -164,15 +164,19 @@ class Alertbot:
         except Exception as e:
             logger.debug(e)
 
-    def send_error_log(self, channel: str, error: Exception) -> None:
+    def send_error_log(self, channel: str) -> None:
         """
         `channel`: Channel name of the channel to send the alert to. \n
         `error`: An exception raised by the application.
         """
         try:
-            channel_id = self.channels[channel]
+            channel_id = (
+                self.channels[self.channels.keys()[0]]
+                if not channel_id
+                else self.channels[channel]
+            )
             mkdown = Alertbot.get_error_markdown(
-                self.env, self.service, self.cloudwatch, self.custom_fields, error
+                self.env, self.service, self.cloudwatch, self.custom_fields
             )
             err, res = Alertbot._send_log(self.client, channel_id, mkdown)
             if err:

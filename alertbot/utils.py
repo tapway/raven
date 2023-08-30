@@ -10,11 +10,10 @@ from .alertbot import Alertbot
 
 def alert(
     config: str,
-    token: str = None,
     service: str = "",
     enviroment: str = "dev",
     client_type="slack",
-    channel: str = "",
+    channel: str = None,
     send_params: bool = False,
 ):
     def _alert(fn):
@@ -22,12 +21,11 @@ def alert(
         def wrapper(*args, **kwargs):
             try:
                 return fn(*args, **kwargs)
-            except Exception as e:
+            except Exception:
                 Alertbot.send_error_logs(
                     channels=load_channels_from_yaml(config),
                     channel=channel,
-                    error=e,
-                    token=load_secret_from_aws_sm(token),
+                    token=load_secret_from_aws_sm(config),
                     service=service,
                     enviroment=enviroment,
                     client_type=client_type,
@@ -42,19 +40,16 @@ def alert(
 
 def send_alert(
     config: str,
-    token: str = None,
     service: str = "",
     enviroment: str = "dev",
     client_type="slack",
-    channel: str = "",
-    error: Exception = None,
+    channel: str = None,
     additional_body_params: Dict = None,
 ):
     Alertbot.send_error_logs(
         channels=load_channels_from_yaml(config),
         channel=channel,
-        error=error,
-        token=load_secret_from_aws_sm(token),
+        token=load_secret_from_aws_sm(config),
         service=service,
         enviroment=enviroment,
         client_type=client_type,
@@ -86,19 +81,23 @@ def load_cloudwatch_prefix_from_yaml(path: str) -> Dict:
             return None
 
 
-def load_secret_from_aws_sm(secret_name="alertbot/slack"):
-    secret_name = secret_name
-    region_name = "ap-southeast-1"
-    # Create a Secrets Manager client
-    session = boto3.session.Session()
-    client = session.client(service_name="secretsmanager", region_name=region_name)
+def load_secret_from_aws_sm(path):
+    p = Path(path)
+    with p.open("r") as f:
+        config = yaml.safe_load(f)
+        secret_name = config["aws_sm_secret"]
+        secret_name = secret_name
+        region_name = "ap-southeast-1"
+        # Create a Secrets Manager client
+        session = boto3.session.Session()
+        client = session.client(service_name="secretsmanager", region_name=region_name)
 
-    try:
-        get_secret_value_response = client.get_secret_value(SecretId=secret_name)
-    except ClientError as e:
-        # For a list of exceptions thrown, see
-        # https://docs.aws.amazon.com/secretsmanager/latest/apireference/API_GetSecretValue.html
-        raise e
+        try:
+            get_secret_value_response = client.get_secret_value(SecretId=secret_name)
+        except ClientError as e:
+            # For a list of exceptions thrown, see
+            # https://docs.aws.amazon.com/secretsmanager/latest/apireference/API_GetSecretValue.html
+            raise e
 
     # Decrypts secret using the associated KMS key.
     secret = json.loads(get_secret_value_response["SecretString"])
