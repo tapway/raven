@@ -35,7 +35,7 @@ class Alertbot:
         """
         self.cloudwatch = None
         if cloudwatch and "HOSTNAME" in os.environ:
-            logger.info(f"Initializing alertbot at {self._get_pod_info()}")
+            logger.info(f"Initializing alertbot at {Alertbot._get_pod_info()}")
             self.cloudwatch = cloudwatch + Alertbot._get_pod_info()
         self.token = token
         self.channels = channels
@@ -59,6 +59,9 @@ class Alertbot:
     ):
         try:
             channel_id = channels[channel]
+            cloudwatch = None
+            if cloudwatch and "HOSTNAME" in os.environ:
+                cloudwatch = cloudwatch + Alertbot._get_pod_info()
             mkdown = Alertbot.get_error_markdown(
                 env=enviroment,
                 service=service,

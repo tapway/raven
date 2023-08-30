@@ -32,7 +32,7 @@ def alert(
                     enviroment=enviroment,
                     client_type=client_type,
                     cloudwatch=load_cloudwatch_prefix_from_yaml(config),
-                    custom_fields=kwargs if send_params else {},
+                    custom_fields=(kwargs if send_params else {}),
                 )
         return wrapper
 
