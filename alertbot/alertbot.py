@@ -59,7 +59,7 @@ class Alertbot:
     ):
         try:
             channel_id = channels[channel]
-            mkdown = Alertbot._get_error_markdown(
+            mkdown = Alertbot.get_error_markdown(
                 env=enviroment,
                 service=service,
                 cloudwatch=cloudwatch,
@@ -70,7 +70,9 @@ class Alertbot:
             err, res = Alertbot._send_log(client, channel_id, mkdown)
             if err:
                 logger.debug(err)
+                print(err)
         except Exception as e:
+            print(e)
             logger.debug(e)
 
     @staticmethod
@@ -125,7 +127,7 @@ class Alertbot:
             return e, None
 
     @staticmethod
-    def _get_error_markdown(
+    def get_error_markdown(
         env: str, service: str, cloudwatch: Any, custom_fields: Dict, error: Exception
     ):
         t = datetime.datetime.utcnow() + datetime.timedelta(hours=8)
@@ -162,7 +164,7 @@ class Alertbot:
         """
         try:
             channel_id = self.channels[channel]
-            mkdown = Alertbot._get_error_markdown(
+            mkdown = Alertbot.get_error_markdown(
                 self.env, self.service, self.cloudwatch, self.custom_fields, error
             )
             err, res = Alertbot._send_log(self.client, channel_id, mkdown)
