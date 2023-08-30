@@ -34,9 +34,34 @@ def alert(
                     cloudwatch=load_cloudwatch_prefix_from_yaml(config),
                     custom_fields=(kwargs if send_params else {}),
                 )
+
         return wrapper
 
     return _alert
+
+
+def send_alert(
+    config: str,
+    token: str = None,
+    service: str = "",
+    enviroment: str = "dev",
+    client_type="slack",
+    channel: str = "",
+    send_params: bool = False,
+    error: Exception = None,
+    **kwargs
+):
+    Alertbot.send_error_logs(
+        channels=load_channels_from_yaml(config),
+        channel=channel,
+        error=error,
+        token=load_secret_from_aws_sm(token),
+        service=service,
+        enviroment=enviroment,
+        client_type=client_type,
+        cloudwatch=load_cloudwatch_prefix_from_yaml(config),
+        custom_fields=(kwargs if send_params else {}),
+    )
 
 
 def load_channels_from_yaml(path: str) -> Dict:
