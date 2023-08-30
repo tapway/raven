@@ -160,9 +160,7 @@ class Alertbot:
     ) -> None:
         try:
             channel_id = (
-                channels[list(channels.keys())[0]]
-                if not channel_id
-                else channels[channel]
+                channels[list(channels.keys())[0]] if not channel else channels[channel]
             )
             err, res = self._send_log(channel_id, msg)
             if err:
@@ -178,7 +176,7 @@ class Alertbot:
         try:
             channel_id = (
                 self.channels[list(self.channels.keys())[0]]
-                if not channel_id
+                if not channel
                 else self.channels[channel]
             )
             mkdown = Alertbot.get_error_markdown(
