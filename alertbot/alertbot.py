@@ -131,19 +131,10 @@ class Alertbot:
         t = datetime.datetime.utcnow() + datetime.timedelta(hours=8)
         t = t.strftime("%m/%d/%Y, %H:%M:%S")
         type, value, tb = sys.exc_info()
-        custom_fields = [
-            f"*{key}*: `{value}`\n" for key, value in custom_fields.items()
-        ]
         if not cloudwatch:
-            mkdown = f"*Time*: `{t}`\n*Environment*: `{env}`\n*Service*: `{service}`\n*Stack Trace*: ```Type: {type}\nTraceback: {traceback.format_exc()}\nError: {value}\n```"
-            for item in custom_fields:
-                mkdown += item
-            return mkdown
+            return f"*Time*: `{t}`\n*Environment*: `{env}`\n*Service*: `{service}`\n*Stack Trace*: ```Type: {type}\nTraceback: {traceback.format_exc()}\nError: {value}\n```\n*Custom Fields*:\n```{custom_fields}\n``` "
         else:
-            mkdown = f"*Time*: `{t}`\n*Environment*: `{env}`\n*Service*: `{service}`\n*Stack Trace*: ```Type: {type}\nTraceback: {traceback.format_exc()}\nError: {value}\n```\n*Cloudwatch*: {cloudwatch}\n"
-            for item in custom_fields:
-                mkdown += item
-            return mkdown
+            return f"*Time*: `{t}`\n*Environment*: `{env}`\n*Service*: `{service}`\n*Stack Trace*: ```Type: {type}\nTraceback: {traceback.format_exc()}\nError: {value}\n```\n*Custom Fields*:\n```{custom_fields}\n```\n*Cloudwatch*: {cloudwatch}\n"
 
     def send_generic_log(self, channel: str, msg: str) -> None:
         try:
