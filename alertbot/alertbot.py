@@ -139,16 +139,20 @@ class Alertbot:
         if not cloudwatch:
             return (
                 f"*Time*: `{t}`\n*Environment*: `{env}`\n*Service*: `{service}`\n*Stack Trace*: ```Type: {type}\nTraceback: {traceback.format_exc()}\nError: {value}\n```"
-                + (f"\n*Custom Fields*:\n```{custom_fields}\n```"
-                if len(custom_fields.keys()) > 0
-                else "")
+                + (
+                    f"\n*Custom Fields*:\n```{custom_fields}\n```"
+                    if len(custom_fields.keys()) > 0
+                    else ""
+                )
             )
         else:
             return (
                 f"*Time*: `{t}`\n*Environment*: `{env}`\n*Service*: `{service}`\n*Stack Trace*: ```Type: {type}\nTraceback: {traceback.format_exc()}\nError: {value}\n```\n*Cloudwatch*: {cloudwatch}\n"
-                + (f"\n*Custom Fields*:\n```{custom_fields}\n```"
-                if len(custom_fields.keys()) > 0
-                else "")
+                + (
+                    f"\n*Custom Fields*:\n```{custom_fields}\n```"
+                    if len(custom_fields.keys()) > 0
+                    else ""
+                )
             )
 
     def send_generic_log(self, channel: str, msg: str) -> None:

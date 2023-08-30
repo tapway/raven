@@ -47,9 +47,8 @@ def send_alert(
     enviroment: str = "dev",
     client_type="slack",
     channel: str = "",
-    send_params: bool = False,
     error: Exception = None,
-    **kwargs
+    additional_body_params: Dict = None,
 ):
     Alertbot.send_error_logs(
         channels=load_channels_from_yaml(config),
@@ -60,7 +59,7 @@ def send_alert(
         enviroment=enviroment,
         client_type=client_type,
         cloudwatch=load_cloudwatch_prefix_from_yaml(config),
-        custom_fields=(kwargs if send_params else {}),
+        custom_fields=(additional_body_params if additional_body_params else {}),
     )
 
 
