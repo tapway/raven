@@ -167,6 +167,8 @@ class Alertbot:
             )
             err, res = Alertbot._send_log(self.client, channel_id, mkdown)
             if err:
+                print(err)
                 logger.debug(err)
         except Exception as e:
+            print(e)
             logger.debug(e)
