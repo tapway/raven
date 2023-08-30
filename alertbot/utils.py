@@ -7,13 +7,15 @@ from pathlib import Path
 import functools
 from .alertbot import Alertbot
 
+
 def alert(
     config: str,
     token: str = None,
     service: str = "",
     enviroment: str = "dev",
     client_type="slack",
-    channel: str = ""
+    channel: str = "",
+    send_params: bool = False,
 ):
     def _alert(fn):
         @functools.wraps(fn)
@@ -21,18 +23,21 @@ def alert(
             try:
                 return fn(*args, **kwargs)
             except Exception as e:
-                bot = Alertbot.get_alertbot_instance(
+                Alertbot.send_error_logs(
                     channels=load_channels_from_yaml(config),
+                    channel=channel,
+                    error=e,
                     token=load_secret_from_aws_sm(token),
                     service=service,
                     enviroment=enviroment,
                     client_type=client_type,
                     cloudwatch=load_cloudwatch_prefix_from_yaml(config),
-                    custom_fields=kwargs
+                    custom_fields=kwargs if send_params else {},
                 )
-                bot.send_error_log(channel=channel, error=e)
         return wrapper
+
     return _alert
+
 
 def load_channels_from_yaml(path: str) -> Dict:
     """
@@ -51,10 +56,11 @@ def load_cloudwatch_prefix_from_yaml(path: str) -> Dict:
     p = Path(path)
     with p.open("r") as f:
         config = yaml.safe_load(f)
-        if 'cloudwatch' in config:
+        if "cloudwatch" in config:
             return config["cloudwatch"]
         else:
             return None
+
 
 def load_secret_from_aws_sm(secret_name="alertbot/slack"):
     secret_name = secret_name

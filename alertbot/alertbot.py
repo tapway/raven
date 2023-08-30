@@ -6,6 +6,7 @@ import logging
 import datetime
 import sys
 import traceback
+from typing import Any, Dict
 
 logging.basicConfig(
     level=logging.INFO,
@@ -23,7 +24,7 @@ class Alertbot:
         enviroment: str = "dev",
         client_type="slack",
         cloudwatch: str = None,
-        custom_fields: Dict = None
+        custom_fields: Dict = None,
     ) -> None:
         """
         `channels`: Dictionary containing `channel_name` and `channel_id` \n
@@ -35,29 +36,60 @@ class Alertbot:
         self.cloudwatch = None
         if cloudwatch and "HOSTNAME" in os.environ:
             logger.info(f"Initializing alertbot at {self._get_pod_info()}")
-            self.cloudwatch = cloudwatch + self._get_pod_info()
+            self.cloudwatch = cloudwatch + Alertbot._get_pod_info()
         self.token = token
         self.channels = channels
         self.client_type = client_type
-        self.client = self._get_client()
+        self.client = Alertbot._get_client(self.token, self.client_type)
         self.env = enviroment
         self.service = service
         self.custom_fields = custom_fields
 
-    def _get_client_mappings(self):
+    @staticmethod
+    def send_error_logs(
+        channels: Dict,
+        channel: str,
+        error: Exception,
+        token: str = None,
+        service: str = "",
+        enviroment: str = "dev",
+        client_type="slack",
+        cloudwatch: str = None,
+        custom_fields: Dict = None,
+    ):
+        try:
+            channel_id = channels[channel]
+            mkdown = Alertbot._get_error_markdown(
+                env=enviroment,
+                service=service,
+                cloudwatch=cloudwatch,
+                custom_fields=custom_fields,
+                error=error,
+            )
+            client = Alertbot._get_client(token=token, client_type=client_type)
+            err, res = Alertbot._send_log(client, channel_id, mkdown)
+            if err:
+                logger.debug(err)
+        except Exception as e:
+            logger.debug(e)
+
+    @staticmethod
+    def _get_client_mappings(client_type):
         client_dict = {"slack": WebClient}
-        if self.client_type in client_dict:
-            return client_dict[self.client_type]
+        if client_type in client_dict:
+            return client_dict[client_type]
         else:
             return client_dict["slack"]
 
-    def _get_pod_info(self):
+    @staticmethod
+    def _get_pod_info():
         pod_name = os.environ["HOSTNAME"]
         return pod_name
 
-    def _get_client(self):
-        client = self._get_client_mappings()
-        return client(token=self.token)
+    @staticmethod
+    def _get_client(token: str, client_type: str):
+        client = Alertbot._get_client_mappings(client_type=client_type)
+        return client(token=token)
 
     @staticmethod
     def get_alertbot_instance(
@@ -67,22 +99,23 @@ class Alertbot:
         enviroment: str = "dev",
         client_type="slack",
         cloudwatch=False,
-        custom_fields=None
+        custom_fields=None,
     ):
         bot_instance = Alertbot(
-                channels=channels,
-                service=service,
-                token=token,
-                enviroment=enviroment,
-                client_type=client_type,
-                cloudwatch=cloudwatch,
-                custom_fields=custom_fields
-            )
+            channels=channels,
+            service=service,
+            token=token,
+            enviroment=enviroment,
+            client_type=client_type,
+            cloudwatch=cloudwatch,
+            custom_fields=custom_fields,
+        )
         return bot_instance
 
-    def _send_log(self, channel_id: str, msg: str) -> Tuple:
+    @staticmethod
+    def _send_log(client: WebClient, channel_id: str, msg: str) -> Tuple:
         try:
-            res = self.client.chat_postMessage(
+            res = client.chat_postMessage(
                 channel=channel_id,
                 text="Error Message",
                 blocks=[{"type": "section", "text": {"type": "mrkdwn", "text": msg}}],
@@ -91,18 +124,23 @@ class Alertbot:
         except Exception as e:
             return e, None
 
-    def _get_error_markdown(self, error: Exception):
+    @staticmethod
+    def _get_error_markdown(
+        env: str, service: str, cloudwatch: Any, custom_fields: Dict, error: Exception
+    ):
         t = datetime.datetime.utcnow() + datetime.timedelta(hours=8)
         t = t.strftime("%m/%d/%Y, %H:%M:%S")
         type, value, tb = sys.exc_info()
-        custom_fields = [f"*{key}*: `{value}`\n" for key, value in self.custom_fields.items()]
-        if not self.cloudwatch:
-            mkdown = f"*Time*: `{t}`\n*Environment*: `{self.env}`\n*Service*: `{self.service}`\n*Stack Trace*: ```Type: {type}\nTraceback: {traceback.format_exc()}\nError: {value}\n```"
+        custom_fields = [
+            f"*{key}*: `{value}`\n" for key, value in custom_fields.items()
+        ]
+        if not cloudwatch:
+            mkdown = f"*Time*: `{t}`\n*Environment*: `{env}`\n*Service*: `{service}`\n*Stack Trace*: ```Type: {type}\nTraceback: {traceback.format_exc()}\nError: {value}\n```"
             for item in custom_fields:
                 mkdown += item
             return mkdown
         else:
-            mkdown = f"*Time*: `{t}`\n*Environment*: `{self.env}`\n*Service*: `{self.service}`\n*Stack Trace*: ```Type: {type}\nTraceback: {traceback.format_exc()}\nError: {value}\n```\n*Cloudwatch*: {self.cloudwatch}\n"
+            mkdown = f"*Time*: `{t}`\n*Environment*: `{env}`\n*Service*: `{service}`\n*Stack Trace*: ```Type: {type}\nTraceback: {traceback.format_exc()}\nError: {value}\n```\n*Cloudwatch*: {cloudwatch}\n"
             for item in custom_fields:
                 mkdown += item
             return mkdown
@@ -123,8 +161,10 @@ class Alertbot:
         """
         try:
             channel_id = self.channels[channel]
-            mkdown = self._get_error_markdown(error)
-            err, res = self._send_log(channel_id, mkdown)
+            mkdown = Alertbot._get_error_markdown(
+                self.env, self.service, self.cloudwatch, self.custom_fields, error
+            )
+            err, res = Alertbot._send_log(self.client, channel_id, mkdown)
             if err:
                 logger.debug(err)
         except Exception as e:
