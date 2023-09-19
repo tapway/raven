@@ -62,3 +62,21 @@ from alertbot.utils import alert
 def example_func():
     x = 1/0 # this raises error, do not catch the error
 ```
+
+## Manual alert in try-catch
+
+```python
+from alertbot.utils import send_alert
+
+def example_func():
+    try:
+        x = 1/0
+    except Exception:
+        # for alertbot to catch this error
+        send_alert(
+            config="config.yaml",
+            enviroment=os.environ.get("CURRENT_ENV", "dev"),
+            service="launcher.listen",
+            additional_body_params=message,
+        )
+```
