@@ -9,7 +9,7 @@ A rather opinionated utility bot to raise alerts in comms in case of runtime exc
 pip install git+ssh://git@github.com/tapway/alertbot.git
 ```
 
-## Usage
+## Configuration
 
 Before using the package -
 
@@ -28,9 +28,9 @@ aws_sm_secret: <YOUR SECRET NAME>
 
 Note: For cloudwatch link to work, your app should be running in a kubernetes cluster, otherwise, it will skip sending the cloudwatch link.
 
-# Usage
+## Usage
 
-## Automatic alert
+### Automatic alert
 
 Sends alert to the first channel in the yaml file,
 
@@ -63,7 +63,7 @@ def example_func():
     x = 1/0 # this raises error, do not catch the error
 ```
 
-## Manual alert in try-catch
+### In try-catch
 
 ```python
 from alertbot.utils import send_alert
