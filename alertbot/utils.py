@@ -30,6 +30,14 @@ def alert(
                         channel=channel,
                         kwargs=kwargs,
                     )
+                elif config_path and token:
+                    send_alert_with_config(
+                        path=config_path,
+                        environment=environment,
+                        channel=channel,
+                        token=token,
+                        kwargs=kwargs,
+                    )
                 elif token and channel_id:
                     send_alert(
                         service=service,
@@ -48,7 +56,7 @@ def alert(
     return _alert
 
 
-def send_alert_with_config(path, channel, environment, kwargs):
+def send_alert_with_config(path, channel, environment, token, kwargs):
     """
     `path`: absolute path of an yaml file containing channel names and ids
     """
@@ -63,12 +71,8 @@ def send_alert_with_config(path, channel, environment, kwargs):
         additional_body_params: Optional[str] = config.get("params", False)
         aws_region: Optional[str] = config.get("aws_region", None)
 
-        # check if token exists
-        token: Optional[str] = None
         if secret_name:
             token = _load_secret_from_aws_sm(secret_name, aws_region)
-        else:
-            token = config.get("bot_token", None)
 
         if not token:
             raise Exception(
