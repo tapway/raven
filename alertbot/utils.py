@@ -48,7 +48,7 @@ def alert(
                     )
                 else:
                     raise Exception(
-                        "Please ensure you have either config file or the token and channel present in the decorator."
+                        "Please ensure you have either config file or the token and channel_id present in the decorator."
                     )
 
         return wrapper
@@ -76,7 +76,7 @@ def send_alert_with_config(path, channel=None, environment=None, token=None, kwa
 
         if not token:
             raise Exception(
-                "Please input either aws_secret or bot_token in config file"
+                "Please input either aws_secret in config file or pass in the bot token"
             )
 
         # load channels
