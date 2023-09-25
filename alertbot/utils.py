@@ -56,7 +56,7 @@ def alert(
     return _alert
 
 
-def send_alert_with_config(path, channel, environment, token, kwargs):
+def send_alert_with_config(path, channel=None, environment=None, token=None, kwargs={}):
     """
     `path`: absolute path of an yaml file containing channel names and ids
     """
