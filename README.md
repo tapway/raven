@@ -11,22 +11,78 @@ pip install git+ssh://git@github.com/tapway/alertbot.git
 
 ## Using with configuration file
 
-Before using the package -
+## With AWS Secrets Manager
 
 1. Create a secret in AWS secret manager with BOT_TOKEN variable in the secret
-1. Make sure the machine/pod/container has appropriate permissions to get secrets from AWS Secrets Manager
-1. You have your config yaml file in correct directory
+2. Make sure the machine/pod/container has appropriate permissions to get secrets from AWS Secrets Manager
+3. You have your config yaml file in correct directory
 
 Example yaml file,
 
 ```yaml
 channels:
   alert_channel: CXXXXXXXXXX # can be obtained from slack channel settings
-cloudwatch: <YOUR CLOUDWATCH PREFIX URL>
+cloudwatch: <IF YOU HAVE A CLOUDWATH PREFIX URL | OPTIONAL>
+service: <YOUR SERVICE NAME | OPTIONAL>
+params: <IF YOU WISH TO HAVE INPUT PARAMS | OPTIONAL>
 aws_sm_secret: <YOUR SECRET NAME>
 aws_region: <YOUR AWS REGION>
-service: <YOUR SERVICE NAME>
-params: <IF YOU WISH TO HAVE INPUT PARAMS>
+```
+
+Note: For cloudwatch link to work, your app should be running in a kubernetes cluster, otherwise, it will skip sending the cloudwatch link.
+
+### Automatic alert
+
+Sends alert to the first channel in the yaml file,
+
+```python
+from alertbot.utils import alert
+
+@alert(
+    config_path="alertbot_config.yaml"
+)
+def example_func():
+    x = 1/0 # this raises error, do not catch the error
+```
+
+Sends alert to specified channel in the yaml file,
+
+```python
+from alertbot.utils import alert
+
+@alert(
+    config_path="alertbot_config.yaml",
+    channel="alert_channel"
+)
+def example_func():
+    x = 1/0 # this raises error, do not catch the error
+```
+
+### In try-catch
+
+```python
+from alertbot.utils import send_alert
+
+def example_func():
+    try:
+        x = 1/0
+    except Exception:
+        # for alertbot to catch this error
+        send_alert_with_config(
+            config_path="alertbot_config.yaml"
+        )
+```
+
+## With token
+
+Example yaml file,
+
+```yaml
+channels:
+  alert_channel: CXXXXXXXXXX # can be obtained from slack channel settings
+cloudwatch: <IF YOU HAVE A CLOUDWATH PREFIX URL | OPTIONAL>
+service: <YOUR SERVICE NAME | OPTIONAL>
+params: <IF YOU WISH TO HAVE INPUT PARAMS | OPTIONAL>
 ```
 
 Note: For cloudwatch link to work, your app should be running in a kubernetes cluster, otherwise, it will skip sending the cloudwatch link.
@@ -40,7 +96,7 @@ from alertbot.utils import alert
 
 @alert(
     config_path="alertbot_config.yaml",
-    environment=<YOUR ENVIRONMENT>,
+    token=<BOT_TOKEN>
 )
 def example_func():
     x = 1/0 # this raises error, do not catch the error
@@ -53,7 +109,7 @@ from alertbot.utils import alert
 
 @alert(
     config_path="alertbot_config.yaml",
-    environment=<YOUR ENVIRONMENT>,
+    token=<BOT_TOKEN>,
     channel="alert_channel"
 )
 def example_func():
@@ -72,7 +128,7 @@ def example_func():
         # for alertbot to catch this error
         send_alert_with_config(
             config_path="alertbot_config.yaml",
-            environment=<YOUR ENVIRONMENT>
+            token=<BOT_TOKEN>
         )
 ```
 
@@ -86,7 +142,6 @@ from alertbot.utils import alert
 @alert(
     token=<YOUR SLACK TOKEN>,
     channel_id=<YOUR SLACK CHANNEL ID>,
-    environment=<YOUR ENVIRONMENT>,
 )
 def example_func():
     x = 1/0 # this raises error, do not catch the error
@@ -105,6 +160,9 @@ def example_func():
         send_alert(
             token=<YOUR SLACK TOKEN>,
             channel_id=<YOUR SLACK CHANNEL ID>,
-            environment=<YOUR ENVIRONMENT>,
         )
 ```
+
+## Optional parameters
+
+`environment` can be passed as an optional param in all options
