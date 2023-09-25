@@ -23,19 +23,19 @@ def alert(
             try:
                 return fn(*args, **kwargs)
             except Exception:
-                if config_path:
-                    send_alert_with_config(
-                        path=config_path,
-                        environment=environment,
-                        channel=channel,
-                        kwargs=kwargs,
-                    )
-                elif config_path and token:
+                if config_path and token:
                     send_alert_with_config(
                         path=config_path,
                         environment=environment,
                         channel=channel,
                         token=token,
+                        kwargs=kwargs,
+                    )
+                elif config_path:
+                    send_alert_with_config(
+                        path=config_path,
+                        environment=environment,
+                        channel=channel,
                         kwargs=kwargs,
                     )
                 elif token and channel_id:
