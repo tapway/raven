@@ -33,7 +33,7 @@ def alert(
                 elif token and channel_id:
                     send_alert(
                         service=service,
-                        enviroment=environment,
+                        environment=environment,
                         additional_body_params=(kwargs if params else {}),
                         token=token,
                         channel_id=channel_id,
@@ -87,11 +87,10 @@ def send_alert_with_config(path, channel, environment, kwargs):
 
         try:
             Alertbot.send_error_logs(
-                channels=channels,
                 token=token,
                 service=service,
                 channel_id=channel_id,
-                enviroment=environment,
+                environment=environment,
                 cloudwatch=cloudwatch,
                 custom_fields=(kwargs if additional_body_params else {}),
             )
@@ -101,7 +100,7 @@ def send_alert_with_config(path, channel, environment, kwargs):
 
 def send_alert(
     service: Optional[str] = None,
-    enviroment: Optional[str] = None,
+    environment: Optional[str] = None,
     channel_id: Optional[str] = None,
     additional_body_params: Dict = None,
     token: str = None,
@@ -110,7 +109,7 @@ def send_alert(
         channel_id=channel_id,
         token=token,
         service=service,
-        enviroment=enviroment,
+        environment=environment,
         custom_fields=(additional_body_params if additional_body_params else {}),
     )
 
