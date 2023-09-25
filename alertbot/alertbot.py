@@ -21,7 +21,7 @@ class Alertbot:
         channels: Dict,
         token: str = None,
         service: str = "",
-        enviroment: str = "dev",
+        environment: str = "dev",
         client_type="slack",
         cloudwatch: str = None,
         custom_fields: Dict = None,
@@ -41,30 +41,26 @@ class Alertbot:
         self.channels = channels
         self.client_type = client_type
         self.client = Alertbot._get_client(self.token, self.client_type)
-        self.env = enviroment
+        self.env = environment
         self.service = service
         self.custom_fields = custom_fields
 
     @staticmethod
     def send_error_logs(
-        channels: Dict,
-        channel: str = None,
+        channel_id: str = None,
         token: str = None,
         service: str = "",
-        enviroment: str = "dev",
+        environment: str = "dev",
         client_type="slack",
         cloudwatch: str = None,
         custom_fields: Dict = None,
     ):
         try:
-            channel_id = (
-                channels[list(channels.keys())[0]] if not channel else channels[channel]
-            )
             cloudwatch = None
             if cloudwatch and "HOSTNAME" in os.environ:
                 cloudwatch = cloudwatch + Alertbot._get_pod_info()
             mkdown = Alertbot.get_error_markdown(
-                env=enviroment,
+                env=environment,
                 service=service,
                 cloudwatch=cloudwatch,
                 custom_fields=custom_fields,
@@ -101,7 +97,7 @@ class Alertbot:
         channels: Dict,
         token: str = None,
         service: str = "",
-        enviroment: str = "dev",
+        environment: str = "dev",
         client_type="slack",
         cloudwatch=False,
         custom_fields=None,
@@ -110,7 +106,7 @@ class Alertbot:
             channels=channels,
             service=service,
             token=token,
-            enviroment=enviroment,
+            environment=environment,
             client_type=client_type,
             cloudwatch=cloudwatch,
             custom_fields=custom_fields,
@@ -168,17 +164,12 @@ class Alertbot:
         except Exception as e:
             logger.debug(e)
 
-    def send_error_log(self, channel: str) -> None:
+    def send_error_log(self, channel_id: str) -> None:
         """
         `channel`: Channel name of the channel to send the alert to. \n
         `error`: An exception raised by the application.
         """
         try:
-            channel_id = (
-                self.channels[list(self.channels.keys())[0]]
-                if not channel
-                else self.channels[channel]
-            )
             mkdown = Alertbot.get_error_markdown(
                 self.env, self.service, self.cloudwatch, self.custom_fields
             )

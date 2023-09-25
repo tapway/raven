@@ -9,7 +9,7 @@ A rather opinionated utility bot to raise alerts in comms in case of runtime exc
 pip install git+ssh://git@github.com/tapway/alertbot.git
 ```
 
-## Configuration
+## Using with configuration file
 
 Before using the package -
 
@@ -24,11 +24,12 @@ channels:
   alert_channel: CXXXXXXXXXX # can be obtained from slack channel settings
 cloudwatch: <YOUR CLOUDWATCH PREFIX URL>
 aws_sm_secret: <YOUR SECRET NAME>
+aws_region: <YOUR AWS REGION>
+service: <YOUR SERVICE NAME>
+params: <IF YOU WISH TO HAVE INPUT PARAMS>
 ```
 
 Note: For cloudwatch link to work, your app should be running in a kubernetes cluster, otherwise, it will skip sending the cloudwatch link.
-
-## Usage
 
 ### Automatic alert
 
@@ -38,10 +39,8 @@ Sends alert to the first channel in the yaml file,
 from alertbot.utils import alert
 
 @alert(
-    config="alertbot_config.yaml",
-    enviroment=os.environ.get("CURRENT_ENV", "dev"),
-    service="example_service",
-    send_params=True,
+    config_path="alertbot_config.yaml",
+    environment=<YOUR ENVIRONMENT>,
 )
 def example_func():
     x = 1/0 # this raises error, do not catch the error
@@ -53,10 +52,8 @@ Sends alert to specified channel in the yaml file,
 from alertbot.utils import alert
 
 @alert(
-    config="alertbot_config.yaml",
-    enviroment=os.environ.get("CURRENT_ENV", "dev"),
-    service="example_service",
-    send_params=True,
+    config_path="alertbot_config.yaml",
+    environment=<YOUR ENVIRONMENT>,
     channel="alert_channel"
 )
 def example_func():
@@ -73,10 +70,43 @@ def example_func():
         x = 1/0
     except Exception:
         # for alertbot to catch this error
+        send_alert_with_config(
+            config_path="alertbot_config.yaml",
+            environment=<YOUR ENVIRONMENT>
+        )
+```
+
+## Using barebone API
+
+### Automatic alert
+
+Sends alert to the first channel in the yaml file,
+
+```python
+from alertbot.utils import alert
+
+@alert(
+    token=<YOUR SLACK TOKEN>,
+    channel_id=<YOUR SLACK CHANNEL ID>,
+    environment=<YOUR ENVIRONMENT>,
+)
+def example_func():
+    x = 1/0 # this raises error, do not catch the error
+```
+
+### In try-catch
+
+```python
+from alertbot.utils import send_alert
+
+def example_func():
+    try:
+        x = 1/0
+    except Exception:
+        # for alertbot to catch this error
         send_alert(
-            config="config.yaml",
-            enviroment=os.environ.get("CURRENT_ENV", "dev"),
-            service="launcher.listen",
-            additional_body_params=message,
+            token=<YOUR SLACK TOKEN>,
+            channel_id=<YOUR SLACK CHANNEL ID>,
+            environment=<YOUR ENVIRONMENT>,
         )
 ```
