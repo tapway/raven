@@ -80,8 +80,6 @@ def example_func():
 
 ### Automatic alert
 
-Sends alert to the first channel in the yaml file,
-
 ```python
 from alertbot.utils import alert
 
