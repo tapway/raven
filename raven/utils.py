@@ -61,11 +61,11 @@ def alert(
     return _alert
 
 
-def send_alert_with_config(path, channel=None, environment=None, token=None, kwargs={}):
+def send_alert_with_config(config_path, channel=None, environment=None, token=None, kwargs={}):
     """
     `path`: absolute path of an yaml file containing channel names and ids
     """
-    p = Path(path)
+    p = Path(config_path)
     with p.open("r") as f:
         config: Dict = yaml.safe_load(f)
         # load variables
