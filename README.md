@@ -1,12 +1,12 @@
-# Alertbot
+# Raven 
 
-[![Python package](https://github.com/tapway/alertbot/actions/workflows/python-package.yml/badge.svg)](https://github.com/tapway/alertbot/actions/workflows/python-package.yml) <br>
-A rather opinionated utility bot to raise alerts in comms in case of runtime exceptions.
+[![Python package](https://github.com/tapway/raven/actions/workflows/python-package.yml/badge.svg)](https://github.com/tapway/raven/actions/workflows/python-package.yml) <br>
+A rather opinionated tool to raise alerts and report data.
 
 ## Installation
 
 ```shell
-pip install git+ssh://git@github.com/tapway/alertbot.git
+pip install git+ssh://git@github.com/tapway/raven.git
 ```
 
 ## Using with configuration file
@@ -36,10 +36,10 @@ Note: For cloudwatch link to work, your app should be running in a kubernetes cl
 Sends alert to the first channel in the yaml file,
 
 ```python
-from alertbot.utils import alert
+from raven.utils import alert
 
 @alert(
-    config_path="alertbot_config.yaml"
+    config_path="raven_config.yaml"
 )
 def example_func():
     x = 1/0 # this raises error, do not catch the error
@@ -48,10 +48,10 @@ def example_func():
 Sends alert to specified channel in the yaml file,
 
 ```python
-from alertbot.utils import alert
+from raven.utils import alert
 
 @alert(
-    config_path="alertbot_config.yaml",
+    config_path="raven_config.yaml",
     channel="alert_channel"
 )
 def example_func():
@@ -61,15 +61,15 @@ def example_func():
 ### In try-catch
 
 ```python
-from alertbot.utils import send_alert
+from raven.utils import send_alert
 
 def example_func():
     try:
         x = 1/0
     except Exception:
-        # for alertbot to catch this error
+        # for raven to catch this error
         send_alert_with_config(
-            config_path="alertbot_config.yaml"
+            config_path="raven_config.yaml"
         )
 ```
 
@@ -92,10 +92,10 @@ Note: For cloudwatch link to work, your app should be running in a kubernetes cl
 Sends alert to the first channel in the yaml file,
 
 ```python
-from alertbot.utils import alert
+from raven.utils import alert
 
 @alert(
-    config_path="alertbot_config.yaml",
+    config_path="raven_config.yaml",
     token=<BOT_TOKEN>
 )
 def example_func():
@@ -105,10 +105,10 @@ def example_func():
 Sends alert to specified channel in the yaml file,
 
 ```python
-from alertbot.utils import alert
+from raven.utils import alert
 
 @alert(
-    config_path="alertbot_config.yaml",
+    config_path="raven_config.yaml",
     token=<BOT_TOKEN>,
     channel="alert_channel"
 )
@@ -119,15 +119,15 @@ def example_func():
 ### In try-catch
 
 ```python
-from alertbot.utils import send_alert
+from raven.utils import send_alert
 
 def example_func():
     try:
         x = 1/0
     except Exception:
-        # for alertbot to catch this error
+        # for raven to catch this error
         send_alert_with_config(
-            config_path="alertbot_config.yaml",
+            config_path="raven_config.yaml",
             token=<BOT_TOKEN>
         )
 ```
@@ -137,7 +137,7 @@ def example_func():
 ### Automatic alert
 
 ```python
-from alertbot.utils import alert
+from raven.utils import alert
 
 @alert(
     token=<YOUR SLACK TOKEN>,
@@ -150,13 +150,13 @@ def example_func():
 ### In try-catch
 
 ```python
-from alertbot.utils import send_alert
+from raven.utils import send_alert
 
 def example_func():
     try:
         x = 1/0
     except Exception:
-        # for alertbot to catch this error
+        # for raven to catch this error
         send_alert(
             token=<YOUR SLACK TOKEN>,
             channel_id=<YOUR SLACK CHANNEL ID>,

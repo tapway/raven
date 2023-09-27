@@ -15,11 +15,11 @@ REQUIREMENTS = [
 PKG_REQUIREMENTS = ["slack-sdk", "boto3"]  # pip-only requirements
 
 setup(
-    name="alertbot",  # name of pypi package
-    version=0.11,  # version of pypi package
+    name="raven",  # name of pypi package
+    version="0.20",  # version of pypi package
     python_requires=">=3.7",
     license="MIT",
-    description=("Tapway's alerting tool for comm. (eg - slack)"),
+    description=("Tapway's tool to watch and report things."),
     long_description=README,
     long_description_content_type="text/markdown",
     url="https://github.com/tapway/alertbot",
