@@ -1,11 +1,11 @@
 import boto3
 from botocore.exceptions import ClientError
 import json
-from typing import Dict, Optional
+from typing import Dict, Optional, Callable, List
 import yaml
 from pathlib import Path
 import functools
-from .alertbot import Alertbot
+from .raven import Raven
 
 
 def alert(
@@ -16,6 +16,7 @@ def alert(
     channel_id: Optional[str] = None,
     params: Optional[bool] = False,
     token: Optional[str] = None,
+    callbacks: Optional[List[Callable]] = None,
 ):
     def _alert(fn):
         @functools.wraps(fn)
@@ -50,6 +51,10 @@ def alert(
                     raise Exception(
                         "Please ensure you have either config file or the token and channel_id present in the decorator."
                     )
+                if callbacks:
+                    for callback in callbacks:
+                        # running arbitrary callbacks
+                        callback()
 
         return wrapper
 
@@ -79,37 +84,42 @@ def send_alert_with_config(path, channel=None, environment=None, token=None, kwa
                 "Please input either aws_secret in config file or pass in the bot token"
             )
 
-        # load channels
-        channel_id = (
-            channels[list(channels.keys())[0]]
-            if not channel
-            else channels.get(channel, None)
-        )
-
-        if not channel_id:
-            raise Exception("Please include channels or input the correct channel_name")
-
-        try:
-            Alertbot.send_error_logs(
-                token=token,
-                service=service,
-                channel_id=channel_id,
-                environment=environment,
-                cloudwatch=cloudwatch,
-                custom_fields=(kwargs if additional_body_params else {}),
+        if channels:
+            # load channels
+            channel_id = (
+                channels[list(channels.keys())[0]]
+                if not channel
+                else channels.get(channel, None)
             )
-        except Exception:
-            raise Exception("Something went wrong in config file, please check.")
+
+            if not channel_id:
+                raise Exception(
+                    "Please include channels or input the correct channel_name"
+                )
+
+            try:
+                Raven.send_error_logs(
+                    token=token,
+                    service=service,
+                    channel_id=channel_id,
+                    environment=environment,
+                    cloudwatch=cloudwatch,
+                    custom_fields=(kwargs if additional_body_params else {}),
+                )
+            except Exception:
+                raise Exception("Something went wrong in config file, please check.")
+        else:
+            raise Exception("Please include channels in your config file")
 
 
 def send_alert(
     service: Optional[str] = None,
     environment: Optional[str] = None,
     channel_id: Optional[str] = None,
-    additional_body_params: Dict = None,
-    token: str = None,
+    additional_body_params: Dict = {},
+    token: Optional[str] = None,
 ):
-    Alertbot.send_error_logs(
+    Raven.send_error_logs(
         channel_id=channel_id,
         token=token,
         service=service,
@@ -118,12 +128,14 @@ def send_alert(
     )
 
 
-def _load_secret_from_aws_sm(secret_name, region_name="ap-southeast-1"):
+def _load_secret_from_aws_sm(
+    secret_name, region_name: Optional[str] = "ap-southeast-1"
+):
     if not secret_name or region_name:
         raise Exception(
             "Please ensure presence of secret_name and region_name in config file"
         )
-    session = boto3.session.Session()
+    session = boto3.Session()
     client = session.client(service_name="secretsmanager", region_name=region_name)
     try:
         get_secret_value_response = client.get_secret_value(SecretId=secret_name)

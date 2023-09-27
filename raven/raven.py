@@ -1,4 +1,4 @@
-from typing import Tuple
+from typing import Optional, Tuple
 from slack_sdk import WebClient
 from typing import Dict
 import os
@@ -6,7 +6,6 @@ import logging
 import datetime
 import sys
 import traceback
-from typing import Any, Dict
 
 logging.basicConfig(
     level=logging.INFO,
@@ -15,16 +14,16 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-class Alertbot:
+class Raven:
     def __init__(
         self,
         channels: Dict,
-        token: str = None,
-        service: str = "",
+        token: Optional[str] = None,
+        service: Optional[str] = "",
         environment: str = "dev",
         client_type="slack",
-        cloudwatch: str = None,
-        custom_fields: Dict = None,
+        cloudwatch: Optional[str] = None,
+        custom_fields: Dict = {},
     ) -> None:
         """
         `channels`: Dictionary containing `channel_name` and `channel_id` \n
@@ -35,38 +34,37 @@ class Alertbot:
         """
         self.cloudwatch = None
         if cloudwatch and "HOSTNAME" in os.environ:
-            logger.info(f"Initializing alertbot at {Alertbot._get_pod_info()}")
-            self.cloudwatch = cloudwatch + Alertbot._get_pod_info()
+            logger.info(f"Initializing alertbot at {Raven._get_pod_info()}")
+            self.cloudwatch = cloudwatch + Raven._get_pod_info()
         self.token = token
         self.channels = channels
         self.client_type = client_type
-        self.client = Alertbot._get_client(self.token, self.client_type)
+        self.client = Raven._get_client(self.token, self.client_type)
         self.env = environment
         self.service = service
         self.custom_fields = custom_fields
 
     @staticmethod
     def send_error_logs(
-        channel_id: str = None,
-        token: str = None,
-        service: str = "",
-        environment: str = "dev",
+        channel_id: Optional[str] = None,
+        token: Optional[str] = None,
+        service: Optional[str] = None,
+        environment: Optional[str] = None,
         client_type="slack",
-        cloudwatch: str = None,
-        custom_fields: Dict = None,
+        cloudwatch: Optional[str] = None,
+        custom_fields: Dict = {},
     ):
         try:
-            cloudwatch = None
             if cloudwatch and "HOSTNAME" in os.environ:
-                cloudwatch = cloudwatch + Alertbot._get_pod_info()
-            mkdown = Alertbot.get_error_markdown(
+                cloudwatch = cloudwatch + Raven._get_pod_info()
+            mkdown = Raven.get_error_markdown(
                 env=environment,
                 service=service,
                 cloudwatch=cloudwatch,
                 custom_fields=custom_fields,
             )
-            client = Alertbot._get_client(token=token, client_type=client_type)
-            err, res = Alertbot._send_log(client, channel_id, mkdown)
+            client = Raven._get_client(token=token, client_type=client_type)
+            err, _ = Raven._send_log(client, channel_id, mkdown)
             if err:
                 logger.debug(err)
                 print(err)
@@ -88,21 +86,23 @@ class Alertbot:
         return pod_name
 
     @staticmethod
-    def _get_client(token: str, client_type: str):
-        client = Alertbot._get_client_mappings(client_type=client_type)
+    def _get_client(token: Optional[str], client_type: str):
+        if not token:
+            raise Exception("Please check presence of your token")
+        client = Raven._get_client_mappings(client_type=client_type)
         return client(token=token)
 
     @staticmethod
     def get_alertbot_instance(
         channels: Dict,
-        token: str = None,
+        token: Optional[str] = None,
         service: str = "",
         environment: str = "dev",
-        client_type="slack",
-        cloudwatch=False,
-        custom_fields=None,
+        client_type: str = "slack",
+        cloudwatch: Optional[str] = None,
+        custom_fields: Dict = {},
     ):
-        bot_instance = Alertbot(
+        bot_instance = Raven(
             channels=channels,
             service=service,
             token=token,
@@ -114,24 +114,32 @@ class Alertbot:
         return bot_instance
 
     @staticmethod
-    def _send_log(client: WebClient, channel_id: str, msg: str) -> Tuple:
-        try:
-            res = client.chat_postMessage(
-                channel=channel_id,
-                text="Error Message",
-                blocks=[{"type": "section", "text": {"type": "mrkdwn", "text": msg}}],
-            )
-            return None, res
-        except Exception as e:
-            return e, None
+    def _send_log(client: WebClient, channel_id: Optional[str], msg: str) -> Tuple:
+        if channel_id:
+            try:
+                res = client.chat_postMessage(
+                    channel=channel_id,
+                    text="Error Message",
+                    blocks=[
+                        {"type": "section", "text": {"type": "mrkdwn", "text": msg}}
+                    ],
+                )
+                return None, res
+            except Exception as e:
+                return e, None
+        else:
+            raise Exception("Please enter a channel_id")
 
     @staticmethod
     def get_error_markdown(
-        env: str, service: str, cloudwatch: Any, custom_fields: Dict
+        env: Optional[str],
+        service: Optional[str],
+        cloudwatch: Optional[str],
+        custom_fields: Dict = {},
     ):
         t = datetime.datetime.utcnow() + datetime.timedelta(hours=8)
         t = t.strftime("%m/%d/%Y, %H:%M:%S")
-        type, value, tb = sys.exc_info()
+        type, value, _ = sys.exc_info()
         if not cloudwatch:
             return (
                 f"*Time*: `{t}`\n*Environment*: `{env}`\n*Service*: `{service}`\n*Stack Trace*: ```Type: {type}\nTraceback: {traceback.format_exc()}\nError: {value}\n```"
@@ -152,13 +160,13 @@ class Alertbot:
             )
 
     def send_generic_log(
-        self, channels: Dict, channel: str = None, msg: str = ""
+        self, channels: Dict, channel: Optional[str] = None, msg: str = ""
     ) -> None:
         try:
             channel_id = (
                 channels[list(channels.keys())[0]] if not channel else channels[channel]
             )
-            err, res = self._send_log(channel_id, msg)
+            err, _ = self._send_log(self.client, channel_id, msg)
             if err:
                 logger.debug(err)
         except Exception as e:
@@ -170,10 +178,10 @@ class Alertbot:
         `error`: An exception raised by the application.
         """
         try:
-            mkdown = Alertbot.get_error_markdown(
+            mkdown = Raven.get_error_markdown(
                 self.env, self.service, self.cloudwatch, self.custom_fields
             )
-            err, res = Alertbot._send_log(self.client, channel_id, mkdown)
+            err, _ = Raven._send_log(self.client, channel_id, mkdown)
             if err:
                 print(err)
                 logger.debug(err)
