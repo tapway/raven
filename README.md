@@ -165,5 +165,5 @@ def example_func():
 
 ## Optional parameters
 
-`environment` can be passed as an optional param in all options \n
+`environment` can be passed as an optional param in all options   
 `callbacks` can be passed as an optional param in all options
