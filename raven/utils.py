@@ -26,7 +26,7 @@ def alert(
             except Exception:
                 if config_path and token:
                     send_alert_with_config(
-                        path=config_path,
+                        config_path=config_path,
                         environment=environment,
                         channel=channel,
                         token=token,
@@ -34,7 +34,7 @@ def alert(
                     )
                 elif config_path:
                     send_alert_with_config(
-                        path=config_path,
+                        config_path=config_path,
                         environment=environment,
                         channel=channel,
                         kwargs=kwargs,
@@ -61,7 +61,9 @@ def alert(
     return _alert
 
 
-def send_alert_with_config(config_path, channel=None, environment=None, token=None, kwargs={}):
+def send_alert_with_config(
+    config_path, channel=None, environment=None, token=None, kwargs={}
+):
     """
     `path`: absolute path of an yaml file containing channel names and ids
     """
