@@ -130,10 +130,8 @@ def send_alert(
     )
 
 
-def _load_secret_from_aws_sm(
-    secret_name, region_name: Optional[str] = "ap-southeast-1"
-):
-    if not secret_name or region_name:
+def _load_secret_from_aws_sm(secret_name: str, region_name: str = "ap-southeast-1"):
+    if not secret_name or not region_name:
         raise Exception(
             "Please ensure presence of secret_name and region_name in config file"
         )
