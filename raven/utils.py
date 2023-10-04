@@ -78,7 +78,7 @@ def send_alert_with_config(
         additional_body_params: Optional[str] = config.get("params", False)
         aws_region: Optional[str] = config.get("aws_region", None)
 
-        if secret_name:
+        if secret_name and not token:
             token = _load_secret_from_aws_sm(secret_name, aws_region)
 
         if not token:
@@ -130,7 +130,7 @@ def send_alert(
     )
 
 
-def _load_secret_from_aws_sm(secret_name: str, region_name: str = "ap-southeast-1"):
+def _load_secret_from_aws_sm(secret_name: str, region_name: Optional[str] = None):
     if not secret_name or not region_name:
         raise Exception(
             "Please ensure presence of secret_name and region_name in config file"

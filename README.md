@@ -11,7 +11,7 @@ pip install git+ssh://git@github.com/tapway/raven.git
 
 ## Using with configuration file
 
-## With AWS Secrets Manager
+### With AWS Secrets Manager
 
 1. Create a secret in AWS secret manager with BOT_TOKEN variable in the secret
 2. Make sure the machine/pod/container has appropriate permissions to get secrets from AWS Secrets Manager
@@ -31,7 +31,7 @@ aws_region: <YOUR AWS REGION>
 
 Note: For cloudwatch link to work, your app should be running in a kubernetes cluster, otherwise, it will skip sending the cloudwatch link.
 
-### Automatic alert
+#### Automatic alert
 
 Sends alert to the first channel in the yaml file,
 
@@ -58,7 +58,7 @@ def example_func():
     x = 1/0 # this raises error, do not catch the error
 ```
 
-### In try-catch
+#### In try-catch
 
 ```python
 from raven.utils import send_alert
@@ -73,7 +73,7 @@ def example_func():
         )
 ```
 
-## With token
+### With token
 
 Example yaml file,
 
@@ -87,7 +87,7 @@ params: <IF YOU WISH TO HAVE INPUT PARAMS | OPTIONAL>
 
 Note: For cloudwatch link to work, your app should be running in a kubernetes cluster, otherwise, it will skip sending the cloudwatch link.
 
-### Automatic alert
+#### Automatic alert
 
 Sends alert to the first channel in the yaml file,
 
@@ -116,7 +116,7 @@ def example_func():
     x = 1/0 # this raises error, do not catch the error
 ```
 
-### In try-catch
+#### In try-catch
 
 ```python
 from raven.utils import send_alert
@@ -132,9 +132,9 @@ def example_func():
         )
 ```
 
-## Using barebone API
+### Using barebone API
 
-### Automatic alert
+#### Automatic alert
 
 ```python
 from raven.utils import alert
@@ -147,7 +147,7 @@ def example_func():
     x = 1/0 # this raises error, do not catch the error
 ```
 
-### In try-catch
+#### In try-catch
 
 ```python
 from raven.utils import send_alert
