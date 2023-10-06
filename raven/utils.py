@@ -54,7 +54,10 @@ def alert(
                 if callbacks:
                     for callback in callbacks:
                         # running arbitrary callbacks
-                        callback()
+                        try:
+                            callback()
+                        except Exception as e:
+                            print(f"Callback failed {e}")
 
         return wrapper
 
