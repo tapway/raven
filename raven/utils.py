@@ -52,12 +52,13 @@ def alert(
                         "Please ensure you have either config file or the token and channel_id present in the decorator."
                     )
                 if callbacks:
-                    for callback in callbacks:
+                    for i in range(len(callbacks)):
+                        callback = callbacks[i]
                         # running arbitrary callbacks
                         try:
-                            callback()
+                            callback(**kwargs)
                         except Exception as e:
-                            print(f"Callback failed {e}")
+                            print(f"Callback {i} failed with error {e}")
 
         return wrapper
 
