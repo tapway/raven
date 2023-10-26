@@ -1,17 +1,19 @@
-# Raven
-
 [![Python package](https://github.com/tapway/raven/actions/workflows/python-package.yml/badge.svg)](https://github.com/tapway/raven/actions/workflows/python-package.yml) <br>
+
+<h1 align="center">
+    <b>raven</b>
+</h1>
 
 <p align="center">
     <b>A rather opinionated tool to raise alerts and report data.</b>
-<p>
+</p>
 
 <p align="center">
     <img src="assets/mascot.jpg" width="400" height="400">
 </p>
 <p align="center">
     <i>She is watching your application with <b>great concern</b></i>
-<p>
+</p>
 
 ## Installation
 
