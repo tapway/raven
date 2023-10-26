@@ -3,6 +3,7 @@ import traceback
 import sys
 from typing import Optional, Dict
 
+
 def get_markdown(
     message: str,
     env: Optional[str],
@@ -11,6 +12,7 @@ def get_markdown(
     t = datetime.datetime.utcnow() + datetime.timedelta(hours=8)
     t = t.strftime("%m/%d/%Y, %H:%M:%S")
     return f"*Time*: `{t}`\n*Environment*: `{env}`\n*Service*: `{service}`\n*Message*: ```Traceback: {message}\n```"
+
 
 def get_error_markdown(
     env: Optional[str],

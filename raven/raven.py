@@ -41,7 +41,7 @@ class Raven:
             Raven._send_log(client, channel_id, mkdown)
         except Exception as e:
             logger.debug(e)
-    
+
     @staticmethod
     def send_error_log(
         channel_id: Optional[str] = None,
@@ -97,8 +97,9 @@ class Raven:
                 client.chat_postMessage(
                     channel=channel_id,
                     text="Generaic Message",
-                    blocks=[{"type": "section", "text": {"type": "mrkdwn", "text": msg}}],
+                    blocks=[
+                        {"type": "section", "text": {"type": "mrkdwn", "text": msg}}
+                    ],
                 )
         else:
             raise Exception("Please enter a channel_id")
-
