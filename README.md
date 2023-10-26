@@ -60,8 +60,10 @@ from raven.utils import alert
 @alert(
     config_path="raven_config.yaml"
 )
-def example_func():
-    x = 1/0 # this raises error, do not catch the error
+def division(**kwargs):
+    x = kwargs.get("a") / kwargs.get("b")
+
+division(a=1, b=0)
 ```
 
 Sends alert to specified channel in the yaml file,
@@ -73,8 +75,10 @@ from raven.utils import alert
     config_path="raven_config.yaml",
     channel="alert_channel"
 )
-def example_func():
-    x = 1/0 # this raises error, do not catch the error
+def division(**kwargs):
+    x = kwargs.get("a") / kwargs.get("b")
+
+division(a=1, b=0)
 ```
 
 #### In try-catch
@@ -82,14 +86,16 @@ def example_func():
 ```python
 from raven.utils import send_alert
 
-def example_func():
+def division(**kwargs):
     try:
-        x = 1/0
+        x = kwargs.get("a") / kwargs.get("b")
     except Exception:
         # for raven to catch this error
         send_alert_with_config(
             config_path="raven_config.yaml"
         )
+
+division(a=1, b=0)
 ```
 
 ### With token
@@ -117,8 +123,10 @@ from raven.utils import alert
     config_path="raven_config.yaml",
     token=<BOT_TOKEN>
 )
-def example_func():
-    x = 1/0 # this raises error, do not catch the error
+def division(**kwargs):
+    x = kwargs.get("a") / kwargs.get("b")
+
+division(a=1, b=0)
 ```
 
 Sends alert to specified channel in the yaml file,
@@ -131,8 +139,10 @@ from raven.utils import alert
     token=<BOT_TOKEN>,
     channel="alert_channel"
 )
-def example_func():
-    x = 1/0 # this raises error, do not catch the error
+def division(**kwargs):
+    x = kwargs.get("a") / kwargs.get("b")
+
+division(a=1, b=0)
 ```
 
 #### In try-catch
@@ -140,15 +150,17 @@ def example_func():
 ```python
 from raven.utils import send_alert
 
-def example_func():
+def division(**kwargs):
     try:
-        x = 1/0
+        x = kwargs.get("a") / kwargs.get("b")
     except Exception:
         # for raven to catch this error
         send_alert_with_config(
             config_path="raven_config.yaml",
             token=<BOT_TOKEN>
         )
+
+division(a=1, b=0)
 ```
 
 ### Using barebone API
@@ -162,8 +174,10 @@ from raven.utils import alert
     token=<YOUR SLACK TOKEN>,
     channel_id=<YOUR SLACK CHANNEL ID>,
 )
-def example_func():
-    x = 1/0 # this raises error, do not catch the error
+def division(**kwargs):
+    x = kwargs.get("a") / kwargs.get("b")
+
+division(a=1, b=0)
 ```
 
 #### In try-catch
@@ -171,9 +185,9 @@ def example_func():
 ```python
 from raven.utils import send_alert
 
-def example_func():
+def division(**kwargs):
     try:
-        x = 1/0
+        x = kwargs.get("a") / kwargs.get("b")
     except Exception:
         # for raven to catch this error
         send_alert(
