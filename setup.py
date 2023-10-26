@@ -16,7 +16,7 @@ PKG_REQUIREMENTS = ["slack-sdk", "boto3"]  # pip-only requirements
 
 setup(
     name="raven",  # name of pypi package
-    version="1.0.2",  # version of pypi package
+    version="1.0.3",  # version of pypi package
     python_requires=">=3.7",
     license="MIT",
     description=("Tapway's tool to watch and report things."),
