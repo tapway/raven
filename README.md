@@ -3,6 +3,7 @@
 [![Python package](https://github.com/tapway/raven/actions/workflows/python-package.yml/badge.svg)](https://github.com/tapway/raven/actions/workflows/python-package.yml) <br>
 A rather opinionated tool to raise alerts and report data.
 ![mascot](assets/mascot.jpg =250x250)
+<img src="assets/mascot.jpg" width="400" height="400">
 > She is watching your application with concern, and she is AI generated.
 
 ## Installation
