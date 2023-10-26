@@ -7,7 +7,7 @@ A rather opinionated tool to raise alerts and report data.
     <img src="assets/mascot.jpg" width="400" height="400">
 </p>
 <p align="center">
-    <i>She is watching your application with <b>concern</b>, and she is AI generated.<i>
+    <i>She is watching your application with <b>great concern</b>, and she is AI generated.</i>
 <p>
 ## Installation
 
@@ -16,8 +16,12 @@ pip install git+http://git@github.com/tapway/raven.git
 ```
 
 ## What it produces
-![mascot](assets/screenshot.png)
-> This is what you get with the default settings, but you can also choose to create your own markdown
+<p align="center">
+    <img src="assets/screenshot.png" width="400" height="400">
+</p>
+<p align="center">
+    This is what you get from the default settings, you can also choose to extend this with the barebone API.
+</p>
 
 ## Using with configuration file
 
