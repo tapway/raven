@@ -7,9 +7,7 @@ A rather opinionated tool to raise alerts and report data.
     <img src="assets/mascot.jpg" width="400" height="400">
 </p>
 <p align="center">
-
-    > She is watching your application with concern, and she is AI generated.
-
+    <i>She is watching your application with <b>concern</b>, and she is AI generated.<i>
 <p>
 ## Installation
 
