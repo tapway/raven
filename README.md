@@ -3,7 +3,7 @@
 [![Python package](https://github.com/tapway/raven/actions/workflows/python-package.yml/badge.svg)](https://github.com/tapway/raven/actions/workflows/python-package.yml) <br>
 
 <p align="center">
-    <i>A rather opinionated tool to raise alerts and report data.</i>
+    <b>A rather opinionated tool to raise alerts and report data.</b>
 <p>
 
 <p align="center">
@@ -20,6 +20,7 @@ pip install git+http://git@github.com/tapway/raven.git
 ```
 
 ## What it produces
+
 <p align="center">
     <img src="assets/screenshot.png">
 </p>
