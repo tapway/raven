@@ -15,6 +15,14 @@
     <i>She is watching your application with <b>great concern</b></i>
 </p>
 
+# Table of Contents
+
+- [Introduction](#introduction)
+- [Documentation](#documentation)
+- [Contributions](#contributions)
+
+# Introduction
+
 ## Installation
 
 ```shell
