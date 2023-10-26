@@ -6,7 +6,10 @@ import yaml
 from pathlib import Path
 import functools
 from .raven import Raven
+import logging
 
+logging.basicConfig(level=logging.ERROR)
+logger = logging.getLogger(__name__)
 
 def alert(
     config_path: Optional[str] = None,
@@ -23,7 +26,8 @@ def alert(
         def wrapper(*args, **kwargs):
             try:
                 return fn(*args, **kwargs)
-            except Exception:
+            except Exception as e:
+                logger.error(e) 
                 if config_path and token:
                     send_alert_with_config(
                         config_path=config_path,
