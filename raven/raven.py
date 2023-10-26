@@ -139,11 +139,11 @@ class Raven:
         t = datetime.datetime.utcnow() + datetime.timedelta(hours=8)
         t = t.strftime("%m/%d/%Y, %H:%M:%S")
         type, value, _ = sys.exc_info()
-        value = str(value)[-2800:]
+        trace = str(traceback.format_exc())[-2800:]
 
         if not cloudwatch:
             return (
-                f"*Time*: `{t}`\n*Environment*: `{env}`\n*Service*: `{service}`\n*Stack Trace*: ```Type: {type}\nTraceback: {traceback.format_exc()}\nError: {value}\n```"
+                f"*Time*: `{t}`\n*Environment*: `{env}`\n*Service*: `{service}`\n*Stack Trace*: ```Type: {type}\nTraceback: {trace}\nError: {value}\n```"
                 + (
                     f"\n*Custom Fields*:\n```{custom_fields}\n```"
                     if len(custom_fields.keys()) > 0
@@ -152,7 +152,7 @@ class Raven:
             )
         else:
             return (
-                f"*Time*: `{t}`\n*Environment*: `{env}`\n*Service*: `{service}`\n*Stack Trace*: ```Type: {type}\nTraceback: {traceback.format_exc()}\nError: {value}\n```\n*Cloudwatch*: {cloudwatch}\n"
+                f"*Time*: `{t}`\n*Environment*: `{env}`\n*Service*: `{service}`\n*Stack Trace*: ```Type: {type}\nTraceback: {trace}\nError: {value}\n```\n*Cloudwatch*: {cloudwatch}\n"
                 + (
                     f"\n*Custom Fields*:\n```{custom_fields}\n```"
                     if len(custom_fields.keys()) > 0
