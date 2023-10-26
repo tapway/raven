@@ -14,6 +14,8 @@ logger = logging.getLogger(__name__)
 
 
 class Raven:
+    client = None
+
     def __init__(self) -> None:
         # the purpose of the class is to encapsulate related implementations and caching clients
         pass
