@@ -4,10 +4,12 @@ import logging
 import traceback
 from typing import Dict, Optional, Callable, List
 from pathlib import Path
+
 import boto3
 import yaml
+
 from botocore.exceptions import ClientError
-from .raven import Raven
+from raven.raven import Raven
 
 logging.basicConfig(level=logging.ERROR)
 logger = logging.getLogger(__name__)
