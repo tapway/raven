@@ -6,8 +6,11 @@ A rather opinionated tool to raise alerts and report data.
 <p align="center">
     <img src="assets/mascot.jpg" width="400" height="400">
 </p>
-> She is watching your application with concern, and she is AI generated.
+<p align="center">
 
+    > She is watching your application with concern, and she is AI generated.
+
+<p>
 ## Installation
 
 ```shell
