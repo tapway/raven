@@ -7,7 +7,7 @@ from pathlib import Path
 import functools
 from .raven import Raven
 import logging
-import sys
+import traceback
 
 logging.basicConfig(level=logging.ERROR)
 logger = logging.getLogger(__name__)
@@ -28,8 +28,8 @@ def alert(
         def wrapper(*args, **kwargs):
             try:
                 return fn(*args, **kwargs)
-            except Exception as e:
-                _, value, _ = sys.exc_info()
+            except Exception:
+                value = traceback.format_exc()
                 logger.error(value)
                 if config_path and token:
                     send_alert_with_config(

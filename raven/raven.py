@@ -140,7 +140,7 @@ class Raven:
         t = t.strftime("%m/%d/%Y, %H:%M:%S")
         type, value, _ = sys.exc_info()
         value = str(value)[-2800:]
-            
+
         if not cloudwatch:
             return (
                 f"*Time*: `{t}`\n*Environment*: `{env}`\n*Service*: `{service}`\n*Stack Trace*: ```Type: {type}\nTraceback: {traceback.format_exc()}\nError: {value}\n```"
