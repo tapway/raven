@@ -1,4 +1,4 @@
-# Raven 
+# Raven
 
 [![Python package](https://github.com/tapway/raven/actions/workflows/python-package.yml/badge.svg)](https://github.com/tapway/raven/actions/workflows/python-package.yml) <br>
 A rather opinionated tool to raise alerts and report data.
@@ -6,7 +6,7 @@ A rather opinionated tool to raise alerts and report data.
 ## Installation
 
 ```shell
-pip install git+ssh://git@github.com/tapway/raven.git
+pip install git+http://git@github.com/tapway/raven.git
 ```
 
 ## Using with configuration file
@@ -165,5 +165,5 @@ def example_func():
 
 ## Optional parameters
 
-`environment` can be passed as an optional param in all options   
+`environment` can be passed as an optional param in all options  
 `callbacks` can be passed as an optional param in all options
