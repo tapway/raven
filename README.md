@@ -28,6 +28,22 @@ pip install git+http://git@github.com/tapway/raven.git
     This is what you get from the default settings, you can also choose to extend this with the barebone API.
 </p>
 
+## Basic Example
+
+```python
+from raven.utils import alert
+
+@alert(
+    config_path="raven_config.yaml"
+)
+def division(a, b):
+    x = a / b
+
+division(1, 0)
+```
+
+# Documentation
+
 ## Using with configuration file
 
 ### With AWS Secrets Manager
