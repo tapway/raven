@@ -2,10 +2,8 @@
 
 [![Python package](https://github.com/tapway/raven/actions/workflows/python-package.yml/badge.svg)](https://github.com/tapway/raven/actions/workflows/python-package.yml) <br>
 A rather opinionated tool to raise alerts and report data.
-![mascot](assets/mascot.jpg "She is watching your application with concern, and she is AI generated.")
-<p align=”center”>
-    <img width=”200" height=”200" src=”https://github.com/tapway/raven/blob/master/mascot.jpg" alt=”my banner”>
-</p>
+![mascot](assets/mascot.jpg=250x250)
+> She is watching your application with concern, and she is AI generated.
 
 ## Installation
 
@@ -14,7 +12,8 @@ pip install git+http://git@github.com/tapway/raven.git
 ```
 
 ## What it produces
-![mascot](assets/screenshot.png "This is what you get with the default settings, but you can also choose to create your own markdown")
+![mascot](assets/screenshot.png)
+> This is what you get with the default settings, but you can also choose to create your own markdown
 
 ## Using with configuration file
 
