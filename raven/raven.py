@@ -139,8 +139,9 @@ class Raven:
         t = datetime.datetime.utcnow() + datetime.timedelta(hours=8)
         t = t.strftime("%m/%d/%Y, %H:%M:%S")
         type, value, _ = sys.exc_info()
-        trace = str(traceback.format_exc())[-2800:]
-
+        trace = str(traceback.format_exc())
+        if len(trace) >= 3000:
+            trace = trace[-2800:]
         if not cloudwatch:
             return (
                 f"*Time*: `{t}`\n*Environment*: `{env}`\n*Service*: `{service}`\n*Stack Trace*: ```Type: {type}\nTraceback: {trace}\nError: {value}\n```"
