@@ -1,14 +1,18 @@
 # Raven
 
 [![Python package](https://github.com/tapway/raven/actions/workflows/python-package.yml/badge.svg)](https://github.com/tapway/raven/actions/workflows/python-package.yml) <br>
-A rather opinionated tool to raise alerts and report data.
+
+<p align="center">
+    <b>A rather opinionated tool to raise alerts and report data.</b>
+<p>
 
 <p align="center">
     <img src="assets/mascot.jpg" width="400" height="400">
 </p>
 <p align="center">
-    <i>She is watching your application with <b>great concern</b>, and she is AI generated.</i>
+    <i>She is watching your application with <b>great concern</b></i>
 <p>
+
 ## Installation
 
 ```shell
@@ -16,6 +20,7 @@ pip install git+http://git@github.com/tapway/raven.git
 ```
 
 ## What it produces
+
 <p align="center">
     <img src="assets/screenshot.png">
 </p>
@@ -179,5 +184,6 @@ def example_func():
 
 ## Optional parameters
 
-`environment` can be passed as an optional param in all options  
+`environment` can be passed as an optional param in all options
+<br>
 `callbacks` can be passed as an optional param in all options
