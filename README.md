@@ -17,7 +17,7 @@ pip install git+http://git@github.com/tapway/raven.git
 
 ## What it produces
 <p align="center">
-    <img src="assets/screenshot.png" width="400" height="400">
+    <img src="assets/screenshot.png">
 </p>
 <p align="center">
     This is what you get from the default settings, you can also choose to extend this with the barebone API.
