@@ -3,11 +3,25 @@
 [![Python package](https://github.com/tapway/raven/actions/workflows/python-package.yml/badge.svg)](https://github.com/tapway/raven/actions/workflows/python-package.yml) <br>
 A rather opinionated tool to raise alerts and report data.
 
+<p align="center">
+    <img src="assets/mascot.jpg" width="400" height="400">
+</p>
+<p align="center">
+    <i>She is watching your application with <b>great concern</b>, and she is AI generated.</i>
+<p>
 ## Installation
 
 ```shell
 pip install git+http://git@github.com/tapway/raven.git
 ```
+
+## What it produces
+<p align="center">
+    <img src="assets/screenshot.png">
+</p>
+<p align="center">
+    This is what you get from the default settings, you can also choose to extend this with the barebone API.
+</p>
 
 ## Using with configuration file
 
