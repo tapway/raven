@@ -7,7 +7,7 @@ from typing import Optional, Dict
 from slack_sdk import WebClient
 
 logging.basicConfig(
-    level=logging.INFO,
+    level=logging.DEBUG,
     format="%(asctime)s -- [%(module)s:%(lineno)s - %(levelname)s] -- %(message)s",
 )
 logger = logging.getLogger(__name__)
@@ -38,7 +38,7 @@ class Raven:
             client = Raven._get_client(token=token, client_type=client_type)
             Raven._send_log(client, channel_id, mkdown)
         except Exception as e:
-            logger.info(e)
+            logger.debug(e)
 
     @staticmethod
     def send_error_log(
@@ -62,7 +62,7 @@ class Raven:
             client = Raven._get_client(token=token, client_type=client_type)
             Raven._send_error_log(client, channel_id, mkdown)
         except Exception as e:
-            logger.info(e)
+            logger.debug(e)
 
     # client provider, this would always contain a map of functions that can be passed a token to initialize a client
     @staticmethod
