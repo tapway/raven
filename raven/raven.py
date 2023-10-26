@@ -9,7 +9,7 @@ from raven.markdown import get_error_markdown, get_markdown
 from raven.providers import client_provider
 
 logging.basicConfig(
-    level=logging.DEBUG,
+    level=logging.ERROR,
     format="%(asctime)s -- [%(module)s:%(lineno)s - %(levelname)s] -- %(message)s",
 )
 logger = logging.getLogger(__name__)
@@ -40,7 +40,7 @@ class Raven:
             client = Raven._get_client(token=token, client_type=client_type)
             Raven._send_log(client, channel_id, mkdown)
         except Exception as e:
-            logger.debug(e)
+            logger.error(e)
 
     @staticmethod
     def send_error_log(
@@ -64,7 +64,7 @@ class Raven:
             client = Raven._get_client(token=token, client_type=client_type)
             Raven._send_error_log(client, channel_id, mkdown)
         except Exception as e:
-            logger.debug(e)
+            logger.error(e)
 
     @staticmethod
     def _get_client(token: Optional[str], client_type: str):
