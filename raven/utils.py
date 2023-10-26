@@ -1,13 +1,13 @@
-import boto3
-from botocore.exceptions import ClientError
 import json
-from typing import Dict, Optional, Callable, List
-import yaml
-from pathlib import Path
 import functools
-from .raven import Raven
 import logging
 import traceback
+from typing import Dict, Optional, Callable, List
+from pathlib import Path
+import boto3
+import yaml
+from botocore.exceptions import ClientError
+from .raven import Raven
 
 logging.basicConfig(level=logging.ERROR)
 logger = logging.getLogger(__name__)
@@ -56,7 +56,7 @@ def alert(
                     )
                 else:
                     raise Exception(
-                        "Please ensure you have either config file or the token and channel_id present in the decorator."
+                        "Please ensure you have either config_path or the token and channel_id present in the decorator."
                     )
                 if callbacks:
                     for i in range(len(callbacks)):
@@ -76,7 +76,7 @@ def send_alert_with_config(
     config_path, channel=None, environment=None, token=None, kwargs={}
 ):
     """
-    `path`: absolute path of an yaml file containing channel names and ids
+    `config_path`: absolute path of an yaml file containing configurations
     """
     p = Path(config_path)
     with p.open("r") as f:
@@ -94,7 +94,7 @@ def send_alert_with_config(
 
         if not token:
             raise Exception(
-                "Please input either aws_secret in config file or pass in the bot token"
+                "Please input either aws_sm_secret in config file or pass in the bot token"
             )
 
         if channels:
@@ -107,7 +107,7 @@ def send_alert_with_config(
 
             if not channel_id:
                 raise Exception(
-                    "Please include channels or input the correct channel_name"
+                    "Please include channels in config file or input the correct channel name"
                 )
 
             try:
@@ -119,8 +119,10 @@ def send_alert_with_config(
                     cloudwatch=cloudwatch,
                     custom_fields=(kwargs if additional_body_params else {}),
                 )
-            except Exception:
-                raise Exception("Something went wrong in config file, please check.")
+            except Exception as e:
+                raise Exception(
+                    f"Something went wrong in config file, please check.\n{e}"
+                )
         else:
             raise Exception("Please include channels in your config file")
 
@@ -144,7 +146,7 @@ def send_alert(
 def _load_secret_from_aws_sm(secret_name: str, region_name: Optional[str] = None):
     if not secret_name or not region_name:
         raise Exception(
-            "Please ensure presence of secret_name and region_name in config file"
+            "Please ensure presence of aws_sm_secret and aws_region in config file"
         )
     session = boto3.Session()
     client = session.client(service_name="secretsmanager", region_name=region_name)
