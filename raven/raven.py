@@ -12,10 +12,11 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+
 class Raven:
     def __init__(self) -> None:
         # the purpose of the class is to encapsulate related implementations and caching clients
-        pass 
+        pass
 
     @staticmethod
     def send_generic_log(
@@ -35,7 +36,7 @@ class Raven:
             client = Raven._get_client(token=token, client_type=client_type)
             Raven._send_log(client, channel_id, mkdown)
         except Exception as e:
-            logger.debug(e)
+            logger.info(e)
 
     @staticmethod
     def send_error_log(
@@ -59,8 +60,8 @@ class Raven:
             client = Raven._get_client(token=token, client_type=client_type)
             Raven._send_error_log(client, channel_id, mkdown)
         except Exception as e:
-            logger.debug(e)
-    
+            logger.info(e)
+
     # client provider, this would always contain a map of functions that can be passed a token to initialize a client
     @staticmethod
     def _get_client_mappings(client_type):
@@ -98,20 +99,17 @@ class Raven:
                 )
         else:
             raise Exception("Please enter a channel_id")
-    
+
     @staticmethod
     def _send_log(client: WebClient, channel_id: Optional[str], msg: str):
         if channel_id:
             client.chat_postMessage(
                 channel=channel_id,
                 text="Generaic Message",
-                blocks=[
-                    {"type": "section", "text": {"type": "mrkdwn", "text": msg}}
-                ],
+                blocks=[{"type": "section", "text": {"type": "mrkdwn", "text": msg}}],
             )
         else:
             raise Exception("Please enter a channel_id")
-    
 
     @staticmethod
     def get_markdown(
@@ -121,9 +119,7 @@ class Raven:
     ):
         t = datetime.datetime.utcnow() + datetime.timedelta(hours=8)
         t = t.strftime("%m/%d/%Y, %H:%M:%S")
-        return (
-                f"*Time*: `{t}`\n*Environment*: `{env}`\n*Service*: `{service}`\n*Message*: ```Traceback: {message}\n```"
-        )
+        return f"*Time*: `{t}`\n*Environment*: `{env}`\n*Service*: `{service}`\n*Message*: ```Traceback: {message}\n```"
 
     @staticmethod
     def get_error_markdown(
@@ -156,4 +152,3 @@ class Raven:
                     else ""
                 )
             )
-
