@@ -219,3 +219,7 @@ def division(**kwargs):
 `environment` can be passed as an optional param in all options
 <br>
 `callbacks` can be passed as an optional param in all options
+
+# Contributions
+
+Contributions are welcomed. View [CONTRIBUTING.md](CONTRIBUTING.md)
