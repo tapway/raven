@@ -111,7 +111,7 @@ def send_alert_with_config(
                 )
 
             try:
-                Raven.send_error_logs(
+                Raven.send_error_log(
                     token=token,
                     service=service,
                     channel_id=channel_id,
@@ -132,7 +132,7 @@ def send_alert(
     additional_body_params: Dict = {},
     token: Optional[str] = None,
 ):
-    Raven.send_error_logs(
+    Raven.send_error_log(
         channel_id=channel_id,
         token=token,
         service=service,
